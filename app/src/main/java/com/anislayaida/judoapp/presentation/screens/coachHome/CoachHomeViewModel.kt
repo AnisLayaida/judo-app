@@ -103,7 +103,7 @@ class CoachHomeViewModel @Inject constructor(
     }
 
     private fun loadGradingRequests() {
-        // Load both pending (stage 1) and readiness_approved (stage 2)
+        
         firestore.collection("gradingRequests")
             .whereIn("status", listOf("pending", "readiness_approved"))
             .addSnapshotListener { snapshot, _ ->
@@ -126,7 +126,7 @@ class CoachHomeViewModel @Inject constructor(
         }
     }
 
-    // Stage 1 — Approve readiness
+    
     fun approveReadiness(request: GradingRequest) {
         viewModelScope.launch {
             try {
@@ -144,7 +144,7 @@ class CoachHomeViewModel @Inject constructor(
         }
     }
 
-    // Stage 1 — Reject with reason
+    
     fun rejectWithReason(request: GradingRequest, reason: String) {
         viewModelScope.launch {
             try {
@@ -164,7 +164,7 @@ class CoachHomeViewModel @Inject constructor(
         }
     }
 
-    // Stage 2 — Record pass (update belt)
+    
     fun recordPass(request: GradingRequest) {
         viewModelScope.launch {
             try {
@@ -183,7 +183,7 @@ class CoachHomeViewModel @Inject constructor(
         }
     }
 
-    // Stage 2 — Record fail (7 day cooldown)
+    
     fun recordFail(request: GradingRequest) {
         viewModelScope.launch {
             try {

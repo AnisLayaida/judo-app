@@ -6,8 +6,8 @@ data class GradingRequest(
     val judokaName:      String = "",
     val currentBelt:     String = "",
     val requestedBelt:   String = "",
-    val status:          String = "pending",    // pending | readiness_approved | rejected | passed | failed | cancelled
-    val stage:           String = "readiness",  // readiness | result
+    val status:          String = "pending",    
+    val stage:           String = "readiness",  
     val rejectionReason: String = "",
     val cooldownUntil:   Long   = 0L,
     val timestamp:       Long   = System.currentTimeMillis()

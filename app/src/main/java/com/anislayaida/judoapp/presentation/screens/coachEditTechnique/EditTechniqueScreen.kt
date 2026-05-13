@@ -38,7 +38,7 @@ fun EditTechniqueScreen(
         if (uiState.isSaved) navController.popBackStack()
     }
 
-    // Map EditTechniqueUiState to AddTechniqueUiState so TechniqueFormCard is reused
+    
     val formState = AddTechniqueUiState(
         name         = uiState.name,
         nameJapanese = uiState.nameJapanese,

@@ -133,7 +133,7 @@ fun TechniqueFormCard(
             modifier            = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // English name
+            
             FormField(label = "Technique Name (English)") {
                 FormTextField(
                     value       = uiState.name,
@@ -142,7 +142,7 @@ fun TechniqueFormCard(
                 )
             }
 
-            // Japanese name
+            
             FormField(label = "Japanese Name") {
                 FormTextField(
                     value       = uiState.nameJapanese,
@@ -151,7 +151,7 @@ fun TechniqueFormCard(
                 )
             }
 
-            // Category + Belt side by side
+            
             Row(
                 modifier              = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -175,7 +175,7 @@ fun TechniqueFormCard(
                 }
             }
 
-            // Subcategory
+            
             FormField(label = "Subcategory") {
                 val subOptions = subcategoryOptions[uiState.category] ?: emptyList()
                 FormDropdown(
@@ -185,7 +185,7 @@ fun TechniqueFormCard(
                 )
             }
 
-            // Description
+            
             FormField(label = "Description") {
                 OutlinedTextField(
                     value         = uiState.description,
@@ -198,7 +198,7 @@ fun TechniqueFormCard(
                 )
             }
 
-            // Restricted toggle
+            
             Row(
                 modifier              = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

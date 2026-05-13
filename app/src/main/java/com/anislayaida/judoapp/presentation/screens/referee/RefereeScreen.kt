@@ -146,7 +146,7 @@ fun RefereeScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ── Winner banner ─────────────────────────────────────
+            
             if (winner != null) {
                 val bannerColor by animateColorAsState(
                     targetValue   = when (winner) { "White" -> PlayerWhite; "Blue" -> PlayerBlue; else -> Gold },
@@ -168,7 +168,7 @@ fun RefereeScreen(
                 }
             }
 
-            // ── Large timer ───────────────────────────────────────
+            
             Spacer(Modifier.height(24.dp))
             Text(
                 text       = timeString,
@@ -189,7 +189,7 @@ fun RefereeScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Duration chips ────────────────────────────────────
+            
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier              = Modifier.padding(horizontal = 16.dp)
@@ -213,7 +213,7 @@ fun RefereeScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // ── Pause / Reset buttons ─────────────────────────────
+            
             Row(
                 modifier              = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -246,7 +246,7 @@ fun RefereeScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── VS + Score panels ─────────────────────────────────
+            
             Box(
                 modifier          = Modifier
                     .fillMaxWidth()
@@ -287,7 +287,7 @@ fun RefereeScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Tap to score label ────────────────────────────────
+            
             Text(
                 "Tap to score",
                 color    = Color.White.copy(alpha = 0.4f),
@@ -296,7 +296,7 @@ fun RefereeScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // ── Scoring buttons grid ──────────────────────────────
+            
             Column(
                 modifier            = Modifier
                     .fillMaxWidth()
@@ -328,7 +328,7 @@ fun RefereeScreen(
                         modifier              = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // White side button
+                        
                         Button(
                             onClick  = actions.first,
                             enabled  = !isFinished,
@@ -338,7 +338,7 @@ fun RefereeScreen(
                         ) {
                             Text(label, color = labelColor, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                         }
-                        // Blue side button
+                        
                         Button(
                             onClick  = actions.second,
                             enabled  = !isFinished,
@@ -363,7 +363,7 @@ fun RefereeScreen(
     }
 }
 
-// ── Score panel ───────────────────────────────────────────────────────────────
+
 
 @Composable
 private fun ScorePanel(
@@ -395,7 +395,7 @@ private fun ScorePanel(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Colour bar
+            
             Box(
                 modifier = Modifier
                     .width(48.dp)
@@ -404,7 +404,7 @@ private fun ScorePanel(
                     .background(barColor)
             )
 
-            // Player label
+            
             Text(
                 label,
                 color      = textColor,
@@ -412,7 +412,7 @@ private fun ScorePanel(
                 fontSize   = 14.sp
             )
 
-            // Score boxes
+            
             Row(
                 modifier              = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -422,7 +422,7 @@ private fun ScorePanel(
                 ScoreBox(label = "Yuko",   value = score.yuko)
             }
 
-            // Shido numbered boxes
+            
             Text("Shido penalties", color = Color.LightGray, fontSize = 10.sp)
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 repeat(3) { index ->
@@ -452,7 +452,7 @@ private fun ScorePanel(
     }
 }
 
-// ── Score box ─────────────────────────────────────────────────────────────────
+
 
 @Composable
 private fun ScoreBox(label: String, value: Int) {

@@ -2,7 +2,7 @@ package com.anislayaida.judoapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// UI Theme (BJA + Traditional Japanese Colours)
+
 val Navy = Color(0xFF0D1B3E)
 val SurfaceBlue = Color(0xFF1A2B55)
 val Red = Color(0xFFC8102E)
@@ -11,7 +11,7 @@ val LightBlue = Color(0xFF3B82F6)
 val Yellow = Color(0xFFFFD700)
 val White = Color(0xFFFFFFFF)
 
-// Belt colours
+
 val BeltWhite = Color(0xFFFFFFFF)
 val BeltRed = Color(0xFFCC0000)
 val BeltYellow = Color(0xFFFFD700)

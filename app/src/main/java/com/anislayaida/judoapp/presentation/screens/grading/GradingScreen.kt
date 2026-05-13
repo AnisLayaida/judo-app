@@ -71,24 +71,24 @@ private fun statusLabel(status: String): String = when (status) {
     else                 -> status.replaceFirstChar { it.uppercase() }
 }
 
-// Kyu PDFs (16+)
+
 private val kyuSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red",    "https://indd.adobe.com/view/e133cbb5-55d1-4a6b-bc36-0734b428a9b8"),
-    "Red"    to Pair("Yellow", "https://indd.adobe.com/view/a83f27b4-c22b-42dd-98c1-121764c103d4"),
-    "Yellow" to Pair("Orange", "https://indd.adobe.com/view/a592f72d-e681-4d7b-8cda-682a62eb31df"),
-    "Orange" to Pair("Green",  "https://indd.adobe.com/view/277e6638-1d80-424b-92d3-1a0a45e1faf3"),
-    "Green"  to Pair("Blue",   "https://indd.adobe.com/view/dc0db1ac-71ad-4254-9f74-644989e7c8e8"),
-    "Blue"   to Pair("Brown",  "https://indd.adobe.com/view/e2fa24cf-bf21-4fbe-adfe-afe129b4b8a8")
+    "White"  to Pair("Red",    "https:
+    "Red"    to Pair("Yellow", "https:
+    "Yellow" to Pair("Orange", "https:
+    "Orange" to Pair("Green",  "https:
+    "Green"  to Pair("Blue",   "https:
+    "Blue"   to Pair("Brown",  "https:
 )
 
-// Mon PDFs (under 16)
+
 private val monSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red (1st–3rd Mon)",    "https://indd.adobe.com/view/da516ee0-b283-413a-b3dd-f634d1343c4d"),
-    "Red"    to Pair("Yellow (4th–6th Mon)", "https://indd.adobe.com/view/e177100e-7077-46a2-beb2-688d4fd81048"),
-    "Yellow" to Pair("Orange (7th–9th Mon)", "https://indd.adobe.com/view/273ca184-25c2-4c37-a27f-3c05c5256de3"),
-    "Orange" to Pair("Green (10th–12th Mon)","https://indd.adobe.com/view/1b27e4d2-bb09-48f1-94fd-919d6f68d86b"),
-    "Green"  to Pair("Blue (13th–15th Mon)", "https://indd.adobe.com/view/ced8c859-3081-4502-a6aa-40594ae79b18"),
-    "Blue"   to Pair("Brown (16th–18th Mon)","https://indd.adobe.com/view/615a3aaa-f40b-4bc1-b224-7471006767c3")
+    "White"  to Pair("Red (1st–3rd Mon)",    "https:
+    "Red"    to Pair("Yellow (4th–6th Mon)", "https:
+    "Yellow" to Pair("Orange (7th–9th Mon)", "https:
+    "Orange" to Pair("Green (10th–12th Mon)","https:
+    "Green"  to Pair("Blue (13th–15th Mon)", "https:
+    "Blue"   to Pair("Brown (16th–18th Mon)","https:
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -145,7 +145,7 @@ fun GradingScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // ── Current grade card ────────────────────────────────
+            
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -195,7 +195,7 @@ fun GradingScreen(
                             )
                         }
 
-                        // Cooldown warning
+                        
                         if (cooldownMsg != null) {
                             Spacer(Modifier.height(8.dp))
                             Row(
@@ -212,7 +212,7 @@ fun GradingScreen(
                             }
                         }
 
-                        // Stage info
+                        
                         if (hasReadinessApproved) {
                             Spacer(Modifier.height(8.dp))
                             Surface(
@@ -257,7 +257,7 @@ fun GradingScreen(
                 }
             }
 
-            // ── Message banner ────────────────────────────────────
+            
             if (message != null) {
                 item {
                     Card(
@@ -270,7 +270,7 @@ fun GradingScreen(
                 }
             }
 
-            // ── Grading history ───────────────────────────────────
+            
             item {
                 Text(
                     "Grading History",
@@ -292,7 +292,7 @@ fun GradingScreen(
                 }
             }
 
-            // ── Grading Syllabus ──────────────────────────────────
+            
             item {
                 Text(
                     "Grading Syllabus",
@@ -347,7 +347,7 @@ fun GradingScreen(
                 }
             }
 
-            // Previous syllabuses
+            
             item {
                 Text("Previous Syllabuses", color = Color.LightGray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
             }
@@ -422,7 +422,7 @@ private fun GradingRequestCard(
                             .format(java.util.Date(request.timestamp)),
                         color = Color.Gray, fontSize = 12.sp
                     )
-                    // Show stage label
+                    
                     Text(
                         if (request.stage == "readiness") "Stage 1: Readiness" else "Stage 2: Result",
                         color = Color.LightGray, fontSize = 11.sp
@@ -442,7 +442,7 @@ private fun GradingRequestCard(
                 }
             }
 
-            // Show rejection reason if present
+            
             if (request.rejectionReason.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
                 Surface(

@@ -102,7 +102,7 @@ fun TimerScreen(
         ) {
             Spacer(Modifier.height(8.dp))
 
-            // ── Duration selector ─────────────────────────────────
+            
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = SurfaceBg),
@@ -151,7 +151,7 @@ fun TimerScreen(
                 }
             }
 
-            // ── Circular timer ────────────────────────────────────
+            
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.size(260.dp)
@@ -190,7 +190,7 @@ fun TimerScreen(
                 }
             }
 
-            // ── Controls ──────────────────────────────────────────
+            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -252,7 +252,7 @@ fun TimerScreen(
                 }
             }
 
-            // ── Info card ─────────────────────────────────────────
+            
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = SurfaceBg),

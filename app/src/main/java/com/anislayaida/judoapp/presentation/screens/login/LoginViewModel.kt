@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
         val email    = _uiState.value.email.trim()
         val password = _uiState.value.password
 
-        // Validate before calling Firebase
+        
         if (email.isBlank()) {
             _uiState.update { it.copy(errorMessage = "Please enter your email address") }
             return

@@ -98,7 +98,7 @@ fun SignUpScreen(
             ) {
                 Spacer(Modifier.height(48.dp))
 
-                // ── Header ────────────────────────────────────────
+                
                 Text(
                     "Create Account",
                     color = Color.White,
@@ -114,7 +114,7 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(32.dp))
 
-                // ── Full Name ─────────────────────────────────────
+                
                 SignUpLabel("Full Name")
                 Spacer(Modifier.height(6.dp))
                 SignUpTextField(
@@ -152,7 +152,7 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // ── Email ─────────────────────────────────────────
+                
                 SignUpLabel("Email")
                 Spacer(Modifier.height(6.dp))
                 SignUpTextField(
@@ -163,7 +163,7 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // ── Password ──────────────────────────────────────
+                
                 SignUpLabel("Password")
                 Spacer(Modifier.height(6.dp))
                 SignUpTextField(
@@ -175,7 +175,7 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // ── Belt / Grade ──────────────────────────────────
+                
                 SignUpLabel("Belt / Grade")
                 Spacer(Modifier.height(6.dp))
                 SignUpDropdown(
@@ -187,7 +187,7 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // ── Judo Club — live search via Overpass API ───────
+                
                 SignUpLabel("Judo Club")
                 Spacer(Modifier.height(6.dp))
                 ClubSearchField(
@@ -199,7 +199,7 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(32.dp))
 
-                // ── Register button ───────────────────────────────
+                
                 Button(
                     onClick = {
                         keyboard?.hide()
@@ -230,7 +230,7 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // ── Sign in link ──────────────────────────────────
+                
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
@@ -260,7 +260,7 @@ fun SignUpScreen(
     }
 }
 
-// ── Club search field ─────────────────────────────────────────────────────────
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

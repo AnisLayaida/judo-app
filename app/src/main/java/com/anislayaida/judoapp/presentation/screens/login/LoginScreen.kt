@@ -42,7 +42,7 @@ fun LoginScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboard = LocalSoftwareKeyboardController.current
 
-    // Navigate when sign in succeeds
+    
     LaunchedEffect(uiState.navigateToHome) {
         if (uiState.navigateToHome) {
             updateRoleForUser(uiState.userRole)
@@ -50,7 +50,7 @@ fun LoginScreen(
         }
     }
 
-    // Show error messages
+    
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -76,7 +76,7 @@ fun LoginScreen(
             ) {
                 Spacer(Modifier.height(60.dp))
 
-                // ── Kanji logo ────────────────────────────────────
+                
                 Box(
                     modifier = Modifier
                         .size(80.dp)
@@ -115,7 +115,7 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(48.dp))
 
-                // ── Email ─────────────────────────────────────────
+                
                 FieldLabel("Email")
                 Spacer(Modifier.height(6.dp))
                 StyledTextField(
@@ -127,7 +127,7 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // ── Password ──────────────────────────────────────
+                
                 FieldLabel("Password")
                 Spacer(Modifier.height(6.dp))
                 StyledTextField(
@@ -141,7 +141,7 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(8.dp))
 
-                // ── Sign In button ────────────────────────────────
+                
                 Button(
                     onClick = {
                         keyboard?.hide()
@@ -172,7 +172,7 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                // ── Divider ───────────────────────────────────────
+                
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
@@ -184,7 +184,7 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                // ── Create account button ─────────────────────────
+                
                 OutlinedButton(
                     onClick = navigateToSignUpScreen,
                     modifier = Modifier
@@ -198,7 +198,7 @@ fun LoginScreen(
 
                 Spacer(Modifier.weight(1f))
 
-                // ── BJA footer ────────────────────────────────────
+                
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(bottom = 32.dp)

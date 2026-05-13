@@ -140,7 +140,7 @@ fun ProfileScreen(
             ) {
                 Spacer(Modifier.height(8.dp))
 
-                // ── Avatar + name ─────────────────────────────────
+                
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
@@ -150,7 +150,7 @@ fun ProfileScreen(
                         modifier            = Modifier.fillMaxWidth().padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Belt-coloured initials avatar
+                        
                         val belt = user?.beltGrade ?: "White"
                         Surface(
                             modifier = Modifier.size(80.dp),
@@ -196,7 +196,7 @@ fun ProfileScreen(
                     }
                 }
 
-                // ── Belt grade ────────────────────────────────────
+                
                 ProfileInfoCard(title = "Grade") {
                     Surface(
                         shape = RoundedCornerShape(6.dp),
@@ -212,7 +212,7 @@ fun ProfileScreen(
                     }
                 }
 
-                // ── Details ───────────────────────────────────────
+                
                 ProfileInfoCard(title = "Details") {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         ProfileRow(label = "Club",          value = user?.judoClub ?: "—")
@@ -222,7 +222,7 @@ fun ProfileScreen(
 
                 Spacer(Modifier.height(4.dp))
 
-                // ── Sign out ──────────────────────────────────────
+                
                 Button(
                     onClick  = { showLogout = true },
                     colors   = ButtonDefaults.buttonColors(containerColor = AppRed),

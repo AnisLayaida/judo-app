@@ -63,11 +63,11 @@ class HomeViewModel @Inject constructor(
 
     fun onBeltSelected(belt: String) {
         if (belt == "__all__") {
-            _selectedBelt.value = null  // All chip always resets to show everything
+            _selectedBelt.value = null  
         } else if (_selectedBelt.value != belt) {
-            _selectedBelt.value = belt  // Only switch if it's a different belt
+            _selectedBelt.value = belt  
         }
-        // Tapping the already-selected belt does nothing
+        
     }
 
     private fun calculateAge(dob: String): Int {

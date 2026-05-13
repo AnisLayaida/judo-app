@@ -73,7 +73,7 @@ class GradingViewModel @Inject constructor(
             return
         }
 
-        // Check cooldown
+        
         val lastRejected = _requests.value
             .filter { it.status == "rejected" || it.status == "failed" }
             .maxByOrNull { it.timestamp }

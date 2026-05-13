@@ -103,7 +103,7 @@ class SignUpViewModel @Inject constructor(
             return
         }
 
-        // Coach must be 16 or over
+        
         if (state.role == UserRole.COACH) {
             val age = try {
                 val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
