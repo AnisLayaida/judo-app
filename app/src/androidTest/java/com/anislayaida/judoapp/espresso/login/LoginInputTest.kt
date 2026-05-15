@@ -40,7 +40,7 @@ class LoginInputTest {
     fun password_field_accepts_typed_input() {
         rule.onNode(hasText("••••••••")).assertExists()
         rule.onNode(hasText("••••••••")).performTextInput(VALID_PASSWORD)
-        // Field remains in the tree and is the only password-type field on screen
+        
         rule.onNode(hasText("••••••••") or hasText(VALID_PASSWORD)).assertExists()
     }
 }

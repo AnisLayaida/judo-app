@@ -143,7 +143,7 @@ fun GradingScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            
+
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -193,7 +193,7 @@ fun GradingScreen(
                             )
                         }
 
-                        
+
                         if (cooldownMsg != null) {
                             Spacer(Modifier.height(8.dp))
                             Row(
@@ -210,7 +210,7 @@ fun GradingScreen(
                             }
                         }
 
-                        
+
                         if (hasReadinessApproved) {
                             Spacer(Modifier.height(8.dp))
                             Surface(
@@ -255,7 +255,7 @@ fun GradingScreen(
                 }
             }
 
-            
+
             if (message != null) {
                 item {
                     Card(
@@ -268,7 +268,7 @@ fun GradingScreen(
                 }
             }
 
-            
+
             item {
                 Text(
                     "Grading History",
@@ -290,7 +290,7 @@ fun GradingScreen(
                 }
             }
 
-            
+
             item {
                 Text(
                     "Grading Syllabus",
@@ -345,7 +345,7 @@ fun GradingScreen(
                 }
             }
 
-            
+
             item {
                 Text("Previous Syllabuses", color = Color.LightGray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
             }
@@ -420,7 +420,7 @@ private fun GradingRequestCard(
                             .format(java.util.Date(request.timestamp)),
                         color = Color.Gray, fontSize = 12.sp
                     )
-                    
+
                     Text(
                         if (request.stage == "readiness") "Stage 1: Readiness" else "Stage 2: Result",
                         color = Color.LightGray, fontSize = 11.sp
@@ -440,7 +440,7 @@ private fun GradingRequestCard(
                 }
             }
 
-            
+
             if (request.rejectionReason.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
                 Surface(
