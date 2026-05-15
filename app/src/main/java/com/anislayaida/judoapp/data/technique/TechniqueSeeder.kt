@@ -6,13 +6,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TechniqueSeeder @Inject constructor(
+open class TechniqueSeeder @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
     private val techniqueCollection = firestore.collection("techniques")
     private val metaDoc = firestore.collection("meta").document("seeder")
 
-    suspend fun seedIfNeeded() {
+    open suspend fun seedIfNeeded() {
         val meta = metaDoc.get().await()
         if (meta.exists() && meta.getBoolean("seeded") == true) return
 
@@ -25,7 +25,6 @@ class TechniqueSeeder @Inject constructor(
         }
 
         batch.commit().await()
-
         metaDoc.set(mapOf("seeded" to true)).await()
     }
 }

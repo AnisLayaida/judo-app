@@ -1,7 +1,9 @@
 package com.anislayaida.judoapp
 
 import com.anislayaida.judoapp.data.AuthRepo
+import com.anislayaida.judoapp.data.club.ClubSeeder
 import com.anislayaida.judoapp.data.technique.TechniqueRepo
+import com.anislayaida.judoapp.data.technique.TechniqueSeeder
 import com.anislayaida.judoapp.data.user.UserRepo
 import com.anislayaida.judoapp.di.FirebaseModule
 import com.google.firebase.auth.FirebaseAuth
@@ -39,4 +41,12 @@ object TestAuthModule {
     @Provides @Singleton
     fun provideTechniqueRepo(): TechniqueRepo =
         Mockito.mock(TechniqueRepo::class.java)
+
+    @Provides @Singleton
+    fun provideTechniqueSeeder(firestore: FirebaseFirestore): TechniqueSeeder =
+        Mockito.mock(TechniqueSeeder::class.java)
+
+    @Provides @Singleton
+    fun provideClubSeeder(firestore: FirebaseFirestore): ClubSeeder =
+        Mockito.mock(ClubSeeder::class.java)
 }

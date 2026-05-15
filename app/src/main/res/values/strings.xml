@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">JudoApp</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in_button">Sign In</string>
+    <string name="create_account_button">Create an Account</string>
+    <string name="register_button">Register</string>
+    <string name="sign_up_button">Sign Up</string>
+    <string name="full_name_hint">Your full name</string>
+    <string name="dob_hint">DD / MM / YYYY</string>
+    <string name="sign_in_link">Sign in</string>
+    <string name="app_title">myJudo</string>
+    <string name="create_account_title">Create Account</string>
 </resources>

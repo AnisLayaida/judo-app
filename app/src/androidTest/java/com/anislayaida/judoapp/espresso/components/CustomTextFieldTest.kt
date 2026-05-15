@@ -1,4 +1,4 @@
-package com.anislayaida.judoapp
+package com.anislayaida.judoapp.espresso.components
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.test.*
@@ -16,7 +16,7 @@ class CustomTextFieldTest {
     private val INPUT_TEXT = "anis@judo.com"
 
     @Test
-    fun `text field displays label`() {
+    fun text_field_displays_label() {
         rule.setContent {
             var value by remember { mutableStateOf("") }
             CustomTextField(value = value, onValueChange = { value = it }, label = LABEL)
@@ -25,7 +25,7 @@ class CustomTextFieldTest {
     }
 
     @Test
-    fun `text field accepts and displays typed input`() {
+    fun text_field_accepts_and_displays_typed_input() {
         rule.setContent {
             var value by remember { mutableStateOf("") }
             CustomTextField(value = value, onValueChange = { value = it }, label = LABEL)
@@ -35,7 +35,7 @@ class CustomTextFieldTest {
     }
 
     @Test
-    fun `text field is enabled by default`() {
+    fun text_field_is_enabled_by_default() {
         rule.setContent {
             var value by remember { mutableStateOf("") }
             CustomTextField(value = value, onValueChange = { value = it }, label = LABEL)

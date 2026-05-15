@@ -6,10 +6,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ClubSeeder @Inject constructor(
+open class ClubSeeder @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
-    suspend fun seedIfNeeded() {
+    open suspend fun seedIfNeeded() {
         val doc = firestore.collection("clubs").document("bjaSeedData").get().await()
         if (doc.exists()) return
 

@@ -73,24 +73,22 @@ private fun statusLabel(status: String): String = when (status) {
 
 
 private val kyuSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red",    "https:
-    "Red"    to Pair("Yellow", "https:
-    "Yellow" to Pair("Orange", "https:
-    "Orange" to Pair("Green",  "https:
-    "Green"  to Pair("Blue",   "https:
-    "Blue"   to Pair("Brown",  "https:
+    "White"  to Pair("Red",    "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/9th-Kyu-Red-Belt-Syllabus.pdf"),
+    "Red"    to Pair("Yellow", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/6th-Kyu-Yellow-Belt-Syllabus.pdf"),
+    "Yellow" to Pair("Orange", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/5th-Kyu-Orange-Belt-Syllabus.pdf"),
+    "Orange" to Pair("Green",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/4th-Kyu-Green-Belt-Syllabus.pdf"),
+    "Green"  to Pair("Blue",   "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/3rd-Kyu-Blue-Belt-Syllabus.pdf"),
+    "Blue"   to Pair("Brown",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/2nd-Kyu-Brown-Belt-Syllabus.pdf")
 )
-
 
 private val monSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red (1st–3rd Mon)",    "https:
-    "Red"    to Pair("Yellow (4th–6th Mon)", "https:
-    "Yellow" to Pair("Orange (7th–9th Mon)", "https:
-    "Orange" to Pair("Green (10th–12th Mon)","https:
-    "Green"  to Pair("Blue (13th–15th Mon)", "https:
-    "Blue"   to Pair("Brown (16th–18th Mon)","https:
+    "White"  to Pair("Red (1st–3rd Mon)",     "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-1-3-Syllabus.pdf"),
+    "Red"    to Pair("Yellow (4th–6th Mon)",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-4-6-Syllabus.pdf"),
+    "Yellow" to Pair("Orange (7th–9th Mon)",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-7-9-Syllabus.pdf"),
+    "Orange" to Pair("Green (10th–12th Mon)", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-10-12-Syllabus.pdf"),
+    "Green"  to Pair("Blue (13th–15th Mon)",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-13-15-Syllabus.pdf"),
+    "Blue"   to Pair("Brown (16th–18th Mon)", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-16-18-Syllabus.pdf")
 )
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradingScreen(
