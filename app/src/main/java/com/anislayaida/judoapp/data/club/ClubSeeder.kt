@@ -10,12 +10,15 @@ open class ClubSeeder @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
     open suspend fun seedIfNeeded() {
-        val doc = firestore.collection("clubs").document("bjaSeedData").get().await()
-        if (doc.exists()) return
+        try {
+            val doc = firestore.collection("clubs").document("bjaSeedData").get().await()
+            if (doc.exists()) return
 
-        firestore.collection("clubs").document("bjaSeedData").set(
-            mapOf("names" to bjaClubs)
-        ).await()
+            firestore.collection("clubs").document("bjaSeedData").set(
+                mapOf("names" to bjaClubs)
+            ).await()
+        } catch (e: Exception) {
+        }
     }
 
     private val bjaClubs = listOf(

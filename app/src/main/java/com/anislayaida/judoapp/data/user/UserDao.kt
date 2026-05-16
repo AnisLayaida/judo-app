@@ -40,9 +40,12 @@ class UserDao @Inject constructor(
             .map { snapshot -> snapshot.toObjects(User::class.java) }
             .catch { emit(emptyList()) }
     }
-
     suspend fun getById(id: String): User? {
-        val snapshot = userCollection.document(id).get().await()
-        return if (snapshot.exists()) snapshot.toObject(User::class.java) else null
+        return try {
+            val snapshot = userCollection.document(id).get().await()
+            if (snapshot.exists()) snapshot.toObject(User::class.java) else null
+        } catch (e: Exception) {
+            null
+        }
     }
 }

@@ -13,18 +13,21 @@ open class TechniqueSeeder @Inject constructor(
     private val metaDoc = firestore.collection("meta").document("seeder")
 
     open suspend fun seedIfNeeded() {
-        val meta = metaDoc.get().await()
-        if (meta.exists() && meta.getBoolean("seeded") == true) return
+        try {
+            val meta = metaDoc.get().await()
+            if (meta.exists() && meta.getBoolean("seeded") == true) return
 
-        val batch = firestore.batch()
+            val batch = firestore.batch()
 
-        BjaSyllabus.techniques.forEach { technique ->
-            val docRef = techniqueCollection.document()
-            val techniqueWithId = technique.copy(uid = docRef.id)
-            batch.set(docRef, techniqueWithId)
+            BjaSyllabus.techniques.forEach { technique ->
+                val docRef = techniqueCollection.document()
+                val techniqueWithId = technique.copy(uid = docRef.id)
+                batch.set(docRef, techniqueWithId)
+            }
+
+            batch.commit().await()
+            metaDoc.set(mapOf("seeded" to true)).await()
+        } catch (e: Exception) {
         }
-
-        batch.commit().await()
-        metaDoc.set(mapOf("seeded" to true)).await()
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.anislayaida.judoapp.data.AuthRepo
 import com.anislayaida.judoapp.data.Response
 import com.anislayaida.judoapp.data.user.UserRepo
+import com.anislayaida.judoapp.data.user.UserRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +35,6 @@ class LoginViewModel @Inject constructor(
         val email    = _uiState.value.email.trim()
         val password = _uiState.value.password
 
-        
         if (email.isBlank()) {
             _uiState.update { it.copy(errorMessage = "Please enter your email address") }
             return
@@ -59,8 +59,14 @@ class LoginViewModel @Inject constructor(
 
             when (result) {
                 is Response.Success -> {
-                    val uid  = authRepo.getUserId() ?: ""
-                    val role = userRepo.getUserRole(uid)
+                    val uid = authRepo.getUserId() ?: ""
+
+                    val role = try {
+                        userRepo.getUserRole(uid)
+                    } catch (e: Exception) {
+                        UserRole.UNKNOWN
+                    }
+
                     _uiState.update {
                         it.copy(
                             isLoading      = false,

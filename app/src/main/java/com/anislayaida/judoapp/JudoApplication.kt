@@ -36,8 +36,11 @@ class JudoApplication : Application() {
         )
 
         CoroutineScope(Dispatchers.IO).launch {
-            techniqueSeeder.seedIfNeeded()
-            clubSeeder.seedIfNeeded()
+            try {
+                techniqueSeeder.seedIfNeeded()
+                clubSeeder.seedIfNeeded()
+            } catch (e: Exception) {
+            }
         }
     }
 }

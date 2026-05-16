@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.anislayaida.judoapp.data.technique.NoteForTechnique
 import com.anislayaida.judoapp.data.technique.Technique
@@ -63,6 +64,27 @@ private fun parseSteps(description: String): List<String> {
         .split(Regex("(?<=[.!?])\\s+"))
         .map { it.trim() }
         .filter { it.isNotEmpty() }
+}
+
+// Maps technique name to its Wikimedia Commons GIF path
+private fun wikimediaGifUrl(techniqueName: String): String? {
+    val path = when (techniqueName) {
+        "O-goshi"           -> "6/6b/O-goshi.gif"
+        "Ippon-seoi-nage"   -> "3/3e/Ippon_seoi_nage.gif"
+        "O-soto-gari"       -> "6/62/O-soto-gari.gif"
+        "O-uchi-gari"       -> "2/22/O-uchi-gari.gif"
+        "Tai-otoshi"        -> "3/35/Tai-otoshi.gif"
+        "Harai-goshi"       -> "0/0e/Harai-goshi.gif"
+        "Uchi-mata"         -> "8/8e/Uchi-mata.gif"
+        "De-ashi-barai"     -> "1/1e/De-ashi-barai.gif"
+        "Ko-uchi-gari"      -> "5/58/Ko-uchi-gari.gif"
+        "Morote-seoi-nage"  -> "4/4e/Morote_seoi_nage.gif"
+        "Tomoe-nage"        -> "7/7e/Tomoe-nage.gif"
+        "Juji-gatame"       -> "3/3c/Juji-gatame.gif"
+        "Kesa-gatame"       -> "5/5e/Kesa-gatame.gif"
+        else                -> null
+    } ?: return null
+    return "https://upload.wikimedia.org/wikipedia/commons/$path"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,10 +146,9 @@ fun TechniqueDetailScreen(
                 }
             }
 
+            // Demonstration card — always shown, GIF or kanji fallback
             technique?.let { t ->
-                if (t.videoUrl.isNotBlank()) {
-                    item { TechniqueGifCard(videoUrl = t.videoUrl) }
-                }
+                item { TechniqueGifCard(technique = t) }
             }
 
             technique?.description?.let { desc ->
@@ -227,30 +248,85 @@ private fun TechniqueHeroCard(technique: Technique) {
 }
 
 @Composable
-private fun TechniqueGifCard(videoUrl: String) {
-    if (videoUrl.isBlank()) return
+private fun TechniqueGifCard(technique: Technique) {
+    val gifUrl = wikimediaGifUrl(technique.name)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
         shape    = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Technique Demonstration", color = Gold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Spacer(Modifier.height(10.dp))
-            AsyncImage(
-                model              = ImageRequest.Builder(LocalContext.current)
-                    .data(videoUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Technique demonstration",
-                modifier           = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale       = ContentScale.Fit
+            Text(
+                "Technique Demonstration",
+                color      = Gold,
+                fontWeight = FontWeight.Bold,
+                fontSize   = 14.sp
             )
-            Spacer(Modifier.height(6.dp))
-            Text("Source: British Judo Association", color = Color.Gray, fontSize = 10.sp)
+            Spacer(Modifier.height(10.dp))
+
+            if (gifUrl != null) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(gifUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Demonstration of ${technique.name}",
+                    modifier           = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale       = ContentScale.Fit,
+                    loading = {
+                        Box(
+                            modifier         = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Gold, strokeWidth = 2.dp)
+                        }
+                    },
+                    error = {
+                        // If URL fails, fall back to kanji display
+                        KanjiFallback(technique = technique)
+                    }
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    "Source: Wikimedia Commons",
+                    color    = Color.Gray,
+                    fontSize = 10.sp
+                )
+            } else {
+                // No mapped URL — show kanji fallback
+                KanjiFallback(technique = technique)
+            }
+        }
+    }
+}
+
+@Composable
+private fun KanjiFallback(technique: Technique) {
+    Box(
+        modifier         = Modifier
+            .fillMaxWidth()
+            .height(140.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(NavyBg),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                technique.nameJapanese,
+                color      = Gold,
+                fontSize   = 48.sp,
+                fontWeight = FontWeight.Light
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                technique.name,
+                color    = Color.LightGray,
+                fontSize = 13.sp
+            )
         }
     }
 }

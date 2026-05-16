@@ -440,7 +440,6 @@ private fun GradingRequestCard(
                 }
             }
 
-
             if (request.rejectionReason.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
                 Surface(
