@@ -35,24 +35,26 @@ private val Gold      = Color(0xFFC9A84C)
 private val AppRed    = Color(0xFFC8102E)
 private val AppGreen  = Color(0xFF22C55E)
 
+
+private val beltOrder = listOf("White", "Red", "Yellow", "Orange", "Green", "Blue", "Brown", "Black")
+
 private fun beltColor(belt: String): Color = when {
-    belt.startsWith("Black") -> Color(0xFF1A1A1A)
+    belt.startsWith("Black") -> Color(0xFF212121)
     else -> when (belt) {
-        "White"  -> Color(0xFFEEEEEE)
-        "Red"    -> Color(0xFFCC0000)
-        "Yellow" -> Color(0xFFFFD700)
-        "Orange" -> Color(0xFFFF6600)
-        "Green"  -> Color(0xFF22C55E)
-        "Blue"   -> Color(0xFF1A6EBF)
-        "Brown"  -> Color(0xFF6B3A2A)
+        "White"  -> Color(0xFFDDDDDD)
+        "Red"    -> Color(0xFFB71C1C)
+        "Yellow" -> Color(0xFFFFD600)
+        "Orange" -> Color(0xFFFF8C00)
+        "Green"  -> Color(0xFF1B5E20)
+        "Blue"   -> Color(0xFF0D47A1)
+        "Brown"  -> Color(0xFF4E342E)
         else     -> Color.Gray
     }
 }
 
-private fun beltTextColor(belt: String): Color = when {
-    belt.startsWith("Black")            -> Color(0xFFFFD700)
-    belt == "White" || belt == "Yellow" -> Color(0xFF333333)
-    else                                -> Color.White
+private fun beltTextColor(belt: String): Color = when (belt) {
+    "White", "Yellow" -> Color(0xFF222222)
+    else              -> Color.White
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,14 +66,14 @@ fun CoachHomeScreen(
     modifier: Modifier = Modifier,
     vm: CoachHomeViewModel = hiltViewModel()
 ) {
-    val gradingRequests  by vm.gradingRequests.collectAsStateWithLifecycle()
-    val judokas          by vm.judokas.collectAsStateWithLifecycle()
-    val searchQuery      by vm.searchQuery.collectAsStateWithLifecycle()
-    val message          by vm.message.collectAsStateWithLifecycle()
-    val techniques       by vm.techniques.collectAsStateWithLifecycle()
-    val techniqueCount   by vm.techniqueCount.collectAsStateWithLifecycle()
-    val memberCount      by vm.memberCount.collectAsStateWithLifecycle()
-    val pendingCount     by vm.pendingCount.collectAsStateWithLifecycle()
+    val gradingRequests by vm.gradingRequests.collectAsStateWithLifecycle()
+    val judokas         by vm.judokas.collectAsStateWithLifecycle()
+    val searchQuery     by vm.searchQuery.collectAsStateWithLifecycle()
+    val message         by vm.message.collectAsStateWithLifecycle()
+    val techniques      by vm.techniques.collectAsStateWithLifecycle()
+    val techniqueCount  by vm.techniqueCount.collectAsStateWithLifecycle()
+    val memberCount     by vm.memberCount.collectAsStateWithLifecycle()
+    val pendingCount    by vm.pendingCount.collectAsStateWithLifecycle()
 
     val filteredTechniques = remember(techniques, searchQuery) {
         vm.filteredTechniques()
@@ -91,15 +93,30 @@ fun CoachHomeScreen(
         containerColor = NavyBg,
         topBar = {
             TopAppBar(
-                title  = { Text("Coach Panel", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = NavyBg)
+                title = {
+                    Column {
+                        Text(
+                            "Coach Panel",
+                            color      = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize   = 18.sp
+                        )
+                        Text(
+                            "myJudo Companion",
+                            color    = Color.White.copy(alpha = 0.4f),
+                            fontSize = 11.sp
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceBg)
             )
         },
         floatingActionButton = {
             if (selectedTab == 0) {
                 FloatingActionButton(
                     onClick        = { navController?.navigate(NavScreen.ADD_TECHNIQUE.route) },
-                    containerColor = AppRed
+                    containerColor = AppRed,
+                    shape          = RoundedCornerShape(16.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = "Add Technique", tint = Color.White)
                 }
@@ -115,20 +132,30 @@ fun CoachHomeScreen(
 
             if (message != null) {
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-                    colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-                    shape    = RoundedCornerShape(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceBg),
+                    shape  = RoundedCornerShape(8.dp)
                 ) {
-                    Text(message!!, modifier = Modifier.padding(14.dp), color = Gold, fontSize = 14.sp)
+                    Text(
+                        message!!,
+                        modifier = Modifier.padding(14.dp),
+                        color    = Gold,
+                        fontSize = 14.sp
+                    )
                 }
             }
 
+            
             Row(
-                modifier              = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier              = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                StatCard(label = "Techniques", value = techniqueCount, color = Gold,     modifier = Modifier.weight(1f))
-                StatCard(label = "Members",    value = memberCount,    color = AppGreen, modifier = Modifier.weight(1f))
+                StatCard("Techniques", techniqueCount, Gold,     Modifier.weight(1f))
+                StatCard("Members",    memberCount,    AppGreen, Modifier.weight(1f))
                 StatCard(
                     label    = "Pending",
                     value    = pendingCount,
@@ -137,6 +164,7 @@ fun CoachHomeScreen(
                 )
             }
 
+            
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor   = NavyBg,
@@ -158,7 +186,11 @@ fun CoachHomeScreen(
                                 badge = {
                                     if (showBadge) {
                                         Badge(containerColor = AppRed) {
-                                            Text(pendingCount.toString(), fontSize = 9.sp, color = Color.White)
+                                            Text(
+                                                pendingCount.toString(),
+                                                fontSize = 9.sp,
+                                                color    = Color.White
+                                            )
                                         }
                                     }
                                 }
@@ -179,7 +211,9 @@ fun CoachHomeScreen(
                     techniques      = filteredTechniques,
                     searchQuery     = searchQuery,
                     onSearchChanged = vm::onSearchChanged,
-                    onEditTechnique = { uid -> navController?.navigate("${NavScreen.EDIT_TECHNIQUE.route}/$uid") }
+                    onEditTechnique = { uid ->
+                        navController?.navigate("${NavScreen.EDIT_TECHNIQUE.route}/$uid")
+                    }
                 )
                 1 -> JudokasTab(judokas = judokas)
                 2 -> GradingsTab(
@@ -196,9 +230,21 @@ fun CoachHomeScreen(
 }
 
 @Composable
-private fun StatCard(label: String, value: Int, color: Color, modifier: Modifier = Modifier) {
-    Card(modifier = modifier, colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(10.dp)) {
-        Column(modifier = Modifier.fillMaxWidth().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+private fun StatCard(
+    label: String,
+    value: Int,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
+        shape    = RoundedCornerShape(10.dp)
+    ) {
+        Column(
+            modifier            = Modifier.fillMaxWidth().padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(value.toString(), color = color, fontSize = 28.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(2.dp))
             Text(label, color = Color.LightGray, fontSize = 11.sp)
@@ -213,14 +259,27 @@ private fun LibraryTab(
     onSearchChanged: (String) -> Unit,
     onEditTechnique: (String) -> Unit
 ) {
+    
+    val grouped = remember(techniques) {
+        val map = techniques.groupBy { it.beltLevel }
+        beltOrder.mapNotNull { belt ->
+            val list = map[belt]
+            if (!list.isNullOrEmpty()) belt to list else null
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         OutlinedTextField(
             value         = searchQuery,
             onValueChange = onSearchChanged,
             placeholder   = { Text("Search techniques…", color = Color.Gray) },
-            leadingIcon   = { Icon(Icons.Default.Search, contentDescription = null, tint = Gold) },
-            modifier      = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-            colors = OutlinedTextFieldDefaults.colors(
+            leadingIcon   = {
+                Icon(Icons.Default.Search, contentDescription = null, tint = Gold)
+            },
+            modifier   = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            colors     = OutlinedTextFieldDefaults.colors(
                 focusedTextColor     = Color.White,
                 unfocusedTextColor   = Color.White,
                 focusedBorderColor   = Gold,
@@ -230,16 +289,77 @@ private fun LibraryTab(
             shape      = RoundedCornerShape(10.dp),
             singleLine = true
         )
+
         LazyColumn(
-            modifier            = Modifier.fillMaxSize(),
-            contentPadding      = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier       = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
         ) {
-            items(techniques, key = { it.uid }) { technique ->
-                TechniqueRow(technique = technique, onEdit = { onEditTechnique(technique.uid) })
+            if (searchQuery.isBlank()) {
+                
+                grouped.forEach { (belt, list) ->
+                    item(key = "header_$belt") {
+                        BeltSectionHeader(belt = belt, count = list.size)
+                    }
+                    items(list, key = { it.uid }) { technique ->
+                        TechniqueRow(
+                            technique = technique,
+                            onEdit    = { onEditTechnique(technique.uid) }
+                        )
+                        Spacer(Modifier.height(6.dp))
+                    }
+                    item(key = "spacer_$belt") { Spacer(Modifier.height(8.dp)) }
+                }
+            } else {
+                
+                items(techniques, key = { it.uid }) { technique ->
+                    TechniqueRow(
+                        technique = technique,
+                        onEdit    = { onEditTechnique(technique.uid) }
+                    )
+                    Spacer(Modifier.height(6.dp))
+                }
             }
             item { Spacer(Modifier.height(80.dp)) }
         }
+    }
+}
+
+@Composable
+private fun BeltSectionHeader(belt: String, count: Int) {
+    Row(
+        modifier              = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, bottom = 6.dp),
+        verticalAlignment     = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment     = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Surface(
+                shape = RoundedCornerShape(4.dp),
+                color = beltColor(belt)
+            ) {
+                Text(
+                    belt,
+                    modifier   = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                    color      = beltTextColor(belt),
+                    fontSize   = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Text(
+                "Belt",
+                color    = Color.White.copy(alpha = 0.5f),
+                fontSize = 12.sp
+            )
+        }
+        Text(
+            "$count techniques",
+            color    = Color.White.copy(alpha = 0.3f),
+            fontSize = 11.sp
+        )
     }
 }
 
@@ -248,26 +368,32 @@ private fun TechniqueRow(technique: Technique, onEdit: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onEdit() },
         colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(8.dp)
+        shape    = RoundedCornerShape(10.dp)
     ) {
         Row(
-            modifier              = Modifier.fillMaxWidth().padding(12.dp),
+            modifier              = Modifier.fillMaxWidth().padding(14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment     = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(technique.name, color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                Text("${technique.category} · ${technique.subcategory}", color = Color.LightGray, fontSize = 12.sp)
-            }
-            Surface(shape = RoundedCornerShape(6.dp), color = beltColor(technique.beltLevel)) {
                 Text(
-                    technique.beltLevel,
-                    modifier   = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                    color      = beltTextColor(technique.beltLevel),
-                    fontSize   = 11.sp,
-                    fontWeight = FontWeight.Bold
+                    technique.name,
+                    color      = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize   = 14.sp
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    "${technique.category} · ${technique.subcategory}",
+                    color    = Color.LightGray,
+                    fontSize = 12.sp
                 )
             }
+            Text(
+                technique.nameJapanese,
+                color    = Gold.copy(alpha = 0.6f),
+                fontSize = 13.sp
+            )
         }
     }
 }
@@ -292,7 +418,11 @@ private fun JudokasTab(judokas: List<User>) {
 
 @Composable
 private fun JudokaRow(user: User) {
-    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(8.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
+        shape    = RoundedCornerShape(10.dp)
+    ) {
         Row(
             modifier              = Modifier.fillMaxWidth().padding(14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -373,14 +503,20 @@ private fun GradingRequestRow(
                     Spacer(Modifier.height(4.dp))
                     rejectionReasons.forEach { reason ->
                         Row(
-                            modifier              = Modifier.fillMaxWidth().clickable { selectedReason = reason }.padding(vertical = 4.dp),
+                            modifier              = Modifier
+                                .fillMaxWidth()
+                                .clickable { selectedReason = reason }
+                                .padding(vertical = 4.dp),
                             verticalAlignment     = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             RadioButton(
                                 selected = selectedReason == reason,
                                 onClick  = { selectedReason = reason },
-                                colors   = RadioButtonDefaults.colors(selectedColor = Gold, unselectedColor = Color.Gray)
+                                colors   = RadioButtonDefaults.colors(
+                                    selectedColor   = Gold,
+                                    unselectedColor = Color.Gray
+                                )
                             )
                             Text(reason, color = Color.White, fontSize = 13.sp)
                         }
@@ -389,13 +525,20 @@ private fun GradingRequestRow(
             },
             confirmButton = {
                 Button(
-                    onClick  = { if (selectedReason.isNotBlank()) { onReject(selectedReason); showRejectDialog = false } },
+                    onClick  = {
+                        if (selectedReason.isNotBlank()) {
+                            onReject(selectedReason)
+                            showRejectDialog = false
+                        }
+                    },
                     enabled  = selectedReason.isNotBlank(),
                     colors   = ButtonDefaults.buttonColors(containerColor = AppRed)
                 ) { Text("Reject", color = Color.White) }
             },
             dismissButton = {
-                TextButton(onClick = { showRejectDialog = false }) { Text("Cancel", color = Gold) }
+                TextButton(onClick = { showRejectDialog = false }) {
+                    Text("Cancel", color = Gold)
+                }
             }
         )
     }
@@ -403,7 +546,7 @@ private fun GradingRequestRow(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(8.dp)
+        shape    = RoundedCornerShape(10.dp)
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(request.judokaName, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp)

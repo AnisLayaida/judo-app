@@ -50,8 +50,36 @@ private val beltColourMap: Map<String, Color> = mapOf(
     "6th Dan" to Color(0xFFFF8C00),
 )
 
+private val beltTagBgMap: Map<String, Color> = mapOf(
+    "White"  to Color(0xFFDDDDDD),
+    "Yellow" to Color(0xFFFFD600),
+    "Orange" to Color(0xFFFF8C00),
+    "Red"    to Color(0xFFB71C1C),
+    "Green"  to Color(0xFF1B5E20),
+    "Blue"   to Color(0xFF0D47A1),
+    "Brown"  to Color(0xFF4E342E),
+    "Black"  to Color(0xFF212121),
+)
+
+private val beltTagTextMap: Map<String, Color> = mapOf(
+    "White"  to Color(0xFF222222),
+    "Yellow" to Color(0xFF222222),
+    "Orange" to Color(0xFFFFFFFF),
+    "Red"    to Color(0xFFFFFFFF),
+    "Green"  to Color(0xFFFFFFFF),
+    "Blue"   to Color(0xFFFFFFFF),
+    "Brown"  to Color(0xFFFFFFFF),
+    "Black"  to Color(0xFFFFFFFF),
+)
+
 private fun beltColor(grade: String): Color =
     beltColourMap[grade] ?: Color(0xFFEEEEEE)
+
+private fun beltTagBg(grade: String): Color =
+    beltTagBgMap[grade] ?: Color(0xFFDDDDDD)
+
+private fun beltTagText(grade: String): Color =
+    beltTagTextMap[grade] ?: Color(0xFF222222)
 
 private const val NAGE_WAZA = "Nage-waza"
 private const val NE_WAZA   = "Ne-waza"
@@ -370,22 +398,25 @@ fun TechniqueRow(
     }
 }
 
+
 @Composable
 private fun BeltTag(grade: String) {
-    val bg   = beltColor(grade).copy(alpha = 0.18f)
-    val text = beltColor(grade)
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
-            .background(bg)
-            .border(0.5.dp, text.copy(alpha = 0.4f), RoundedCornerShape(4.dp))
-            .padding(horizontal = 6.dp, vertical = 2.dp)
+            .background(beltTagBg(grade))
+            .then(
+                if (grade == "Black")
+                    Modifier.border(0.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(4.dp))
+                else Modifier
+            )
+            .padding(horizontal = 8.dp, vertical = 3.dp)
     ) {
         Text(
             text       = grade,
             fontSize   = 10.sp,
-            fontWeight = FontWeight.Medium,
-            color      = if (grade == "White") Color.White.copy(alpha = 0.8f) else text
+            fontWeight = FontWeight.Bold,
+            color      = beltTagText(grade)
         )
     }
 }

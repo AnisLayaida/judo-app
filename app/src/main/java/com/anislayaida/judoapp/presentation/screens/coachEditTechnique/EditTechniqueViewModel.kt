@@ -70,13 +70,32 @@ class EditTechniqueViewModel @Inject constructor(
                 techniqueRepo.update(technique)
                 _uiState.update { it.copy(isLoading = false, isSaved = true) }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Failed to update technique") }
+                _uiState.update {
+                    it.copy(isLoading = false, errorMessage = "Failed to update technique")
+                }
+            }
+        }
+    }
+
+    
+    fun deleteTechnique() {
+        val uid = _uiState.value.uid
+        if (uid.isBlank()) return
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        viewModelScope.launch {
+            try {
+                techniqueRepo.delete(uid)
+                _uiState.update { it.copy(isLoading = false, isDeleted = true) }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, errorMessage = "Failed to delete technique")
+                }
             }
         }
     }
 
     private fun beltOrder(belt: String): Int = when (belt) {
-        "White"  -> 0; "Yellow" -> 1; "Orange" -> 2; "Red" -> 3
+        "White"  -> 0; "Yellow" -> 1; "Orange" -> 2; "Red"   -> 3
         "Green"  -> 4; "Blue"   -> 5; "Brown"  -> 6; "Black" -> 7
         else     -> 8
     }

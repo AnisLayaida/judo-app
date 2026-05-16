@@ -11,5 +11,6 @@ data class EditTechniqueUiState(
     val isRestricted: Boolean = false,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isDeleted: Boolean = false
 )

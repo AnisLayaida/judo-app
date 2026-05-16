@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.anislayaida.judoapp.presentation.screens.addTechnique.AddTechniqueUiS
 private val NavyBg  = Color(0xFF0D1B3E)
 private val Gold    = Color(0xFFC9A84C)
 private val AppRed  = Color(0xFFC8102E)
+private val SurfaceBg = Color(0xFF1A2B55)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +33,7 @@ fun EditTechniqueScreen(
     vm: EditTechniqueViewModel = hiltViewModel()
 ) {
     val uiState by vm.uiState.collectAsStateWithLifecycle()
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(techniqueId) { vm.load(techniqueId) }
 
@@ -38,7 +41,48 @@ fun EditTechniqueScreen(
         if (uiState.isSaved) navController.popBackStack()
     }
 
+    LaunchedEffect(uiState.isDeleted) {
+        if (uiState.isDeleted) navController.popBackStack()
+    }
+
     
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            containerColor   = SurfaceBg,
+            title = {
+                Text(
+                    "Delete Technique",
+                    color      = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    "Are you sure you want to delete \"${uiState.name}\"? This cannot be undone.",
+                    color    = Color.LightGray,
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        vm.deleteTechnique()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = AppRed)
+                ) {
+                    Text("Delete", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel", color = Gold)
+                }
+            }
+        )
+    }
+
     val formState = AddTechniqueUiState(
         name         = uiState.name,
         nameJapanese = uiState.nameJapanese,
@@ -62,6 +106,16 @@ fun EditTechniqueScreen(
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Gold)
+                    }
+                },
+                actions = {
+                    
+                    IconButton(onClick = { showDeleteDialog = true }) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete technique",
+                            tint               = AppRed
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = NavyBg)
@@ -93,6 +147,7 @@ fun EditTechniqueScreen(
                 Text(uiState.errorMessage!!, color = AppRed, fontSize = 13.sp)
             }
 
+            
             Button(
                 onClick  = vm::updateTechnique,
                 enabled  = !uiState.isLoading,
@@ -107,7 +162,12 @@ fun EditTechniqueScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Update Technique", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(
+                        "Update Technique",
+                        color      = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize   = 16.sp
+                    )
                 }
             }
 

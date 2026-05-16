@@ -1,5 +1,7 @@
 package com.anislayaida.judoapp.presentation.screens.techniqueDetail
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -15,13 +17,13 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,18 +31,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 import com.anislayaida.judoapp.data.technique.NoteForTechnique
 import com.anislayaida.judoapp.data.technique.Technique
 import java.text.SimpleDateFormat
 import java.util.*
 
-private val NavyBg    = Color(0xFF0D1B3E)
-private val SurfaceBg = Color(0xFF1A2B55)
-private val Gold      = Color(0xFFC9A84C)
-private val AppRed    = Color(0xFFC8102E)
+private val NavyBg     = Color(0xFF0D1B3E)
+private val SurfaceBg  = Color(0xFF1A2B55)
+private val Gold       = Color(0xFFC9A84C)
+private val AppRed     = Color(0xFFC8102E)
+private val YouTubeRed = Color(0xFFFF0000)
 
 private fun beltTagColor(belt: String): Color = when (belt) {
     "White"  -> Color(0xFFEEEEEE)
@@ -66,25 +66,29 @@ private fun parseSteps(description: String): List<String> {
         .filter { it.isNotEmpty() }
 }
 
-// Maps technique name to its Wikimedia Commons GIF path
-private fun wikimediaGifUrl(techniqueName: String): String? {
-    val path = when (techniqueName) {
-        "O-goshi"           -> "6/6b/O-goshi.gif"
-        "Ippon-seoi-nage"   -> "3/3e/Ippon_seoi_nage.gif"
-        "O-soto-gari"       -> "6/62/O-soto-gari.gif"
-        "O-uchi-gari"       -> "2/22/O-uchi-gari.gif"
-        "Tai-otoshi"        -> "3/35/Tai-otoshi.gif"
-        "Harai-goshi"       -> "0/0e/Harai-goshi.gif"
-        "Uchi-mata"         -> "8/8e/Uchi-mata.gif"
-        "De-ashi-barai"     -> "1/1e/De-ashi-barai.gif"
-        "Ko-uchi-gari"      -> "5/58/Ko-uchi-gari.gif"
-        "Morote-seoi-nage"  -> "4/4e/Morote_seoi_nage.gif"
-        "Tomoe-nage"        -> "7/7e/Tomoe-nage.gif"
-        "Juji-gatame"       -> "3/3c/Juji-gatame.gif"
-        "Kesa-gatame"       -> "5/5e/Kesa-gatame.gif"
-        else                -> null
-    } ?: return null
-    return "https://upload.wikimedia.org/wikipedia/commons/$path"
+private fun efficientJudoUrl(techniqueName: String): String {
+    val videoId = when (techniqueName) {
+        "O-goshi"              -> "VLYKx-Fwhxg"
+        "Tai-otoshi"           -> "Q5kH1IIid-Q"
+        "O-soto-gari"          -> "KeIPk8O58zs"
+        "O-uchi-gari"          -> "I3BWf1ZoIuc"
+        "Harai-goshi"          -> "_gcIWtS-9Ms"
+        "Uchi-mata"            -> "N9lpgFLKqvE"
+        "Ippon-seoi-nage"      -> "eWEW9SfI5xg"
+        "Morote-seoi-nage"     -> "eWEW9SfI5xg"
+        "Sumi-gaeshi"          -> "0BuqVnafVSg"
+        "Sasae-tsurikomi-ashi" -> "MiGljHOokvE"
+        "Okuri-ashi-barai"     -> "2WHtL7Rzwfs"
+        "Tsuri-komi-goshi"     -> "4HJumX7ArOI"
+        "Tsuri-goshi"          -> "_rag76pFL9U"
+        "Hiza-guruma"          -> "a1RZvytW3OI"
+        else                   -> null
+    }
+    return if (videoId != null) {
+        "https://www.youtube.com/watch?v=$videoId"
+    } else {
+        "https://www.youtube.com/@EfficientJudo/search?query=${Uri.encode(techniqueName)}"
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,9 +150,8 @@ fun TechniqueDetailScreen(
                 }
             }
 
-            // Demonstration card — always shown, GIF or kanji fallback
-            technique?.let { t ->
-                item { TechniqueGifCard(technique = t) }
+            item {
+                technique?.let { t -> TechniqueVideoCard(technique = t) }
             }
 
             technique?.description?.let { desc ->
@@ -237,19 +240,14 @@ private fun TechniqueHeroCard(technique: Technique) {
                     Text(technique.subcategory, color = Color.LightGray, fontSize = 13.sp)
                 }
             }
-            if (technique.description.isNotEmpty()) {
-                Spacer(Modifier.height(16.dp))
-                HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
-                Spacer(Modifier.height(16.dp))
-                Text(technique.description, color = Color.LightGray, fontSize = 14.sp, lineHeight = 22.sp)
-            }
         }
     }
 }
 
 @Composable
-private fun TechniqueGifCard(technique: Technique) {
-    val gifUrl = wikimediaGifUrl(technique.name)
+private fun TechniqueVideoCard(technique: Technique) {
+    val context  = LocalContext.current
+    val videoUrl = efficientJudoUrl(technique.name)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -257,76 +255,27 @@ private fun TechniqueGifCard(technique: Technique) {
         shape    = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            Text("Technique Demonstration", color = Gold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Spacer(Modifier.height(4.dp))
             Text(
-                "Technique Demonstration",
-                color      = Gold,
-                fontWeight = FontWeight.Bold,
-                fontSize   = 14.sp
+                "Watch ${technique.name} demonstrated by Efficient Judo",
+                color = Color.LightGray, fontSize = 12.sp
             )
-            Spacer(Modifier.height(10.dp))
-
-            if (gifUrl != null) {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(gifUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Demonstration of ${technique.name}",
-                    modifier           = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale       = ContentScale.Fit,
-                    loading = {
-                        Box(
-                            modifier         = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = Gold, strokeWidth = 2.dp)
-                        }
-                    },
-                    error = {
-                        // If URL fails, fall back to kanji display
-                        KanjiFallback(technique = technique)
-                    }
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    "Source: Wikimedia Commons",
-                    color    = Color.Gray,
-                    fontSize = 10.sp
-                )
-            } else {
-                // No mapped URL — show kanji fallback
-                KanjiFallback(technique = technique)
+            Spacer(Modifier.height(12.dp))
+            Button(
+                onClick  = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+                    context.startActivity(intent)
+                },
+                colors   = ButtonDefaults.buttonColors(containerColor = YouTubeRed),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.PlayArrow, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Watch on YouTube", color = Color.White, fontWeight = FontWeight.Bold)
             }
-        }
-    }
-}
-
-@Composable
-private fun KanjiFallback(technique: Technique) {
-    Box(
-        modifier         = Modifier
-            .fillMaxWidth()
-            .height(140.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(NavyBg),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                technique.nameJapanese,
-                color      = Gold,
-                fontSize   = 48.sp,
-                fontWeight = FontWeight.Light
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                technique.name,
-                color    = Color.LightGray,
-                fontSize = 13.sp
-            )
+            Spacer(Modifier.height(4.dp))
+            Text("Source: Efficient Judo", color = Color.Gray, fontSize = 10.sp)
         }
     }
 }
@@ -347,8 +296,7 @@ private fun StepByStepCard(steps: List<String>) {
             ) {
                 Text("Step-by-Step Breakdown", color = Gold, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Icon(
-                    imageVector        = if (expanded) Icons.Default.KeyboardArrowUp
-                    else Icons.Default.KeyboardArrowDown,
+                    imageVector        = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expanded) "Collapse" else "Expand",
                     tint               = Gold
                 )
@@ -362,10 +310,7 @@ private fun StepByStepCard(steps: List<String>) {
                             verticalAlignment     = Alignment.Top
                         ) {
                             Box(
-                                modifier         = Modifier
-                                    .size(26.dp)
-                                    .clip(CircleShape)
-                                    .background(Gold.copy(alpha = 0.15f)),
+                                modifier         = Modifier.size(26.dp).clip(CircleShape).background(Gold.copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text("${index + 1}", color = Gold, fontSize = 11.sp, fontWeight = FontWeight.Bold)

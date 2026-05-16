@@ -48,9 +48,9 @@ private fun beltColor(belt: String): Color = when {
 }
 
 private fun beltTextColor(belt: String): Color = when {
-    belt.startsWith("Black")                    -> Color(0xFFFFD700)
-    belt == "White" || belt == "Yellow"         -> Color(0xFF333333)
-    else                                        -> Color.White
+    belt.startsWith("Black")                -> Color(0xFFFFD700)
+    belt == "White" || belt == "Yellow"     -> Color(0xFF333333)
+    else                                    -> Color.White
 }
 
 private fun statusColor(status: String): Color = when (status) {
@@ -71,24 +71,24 @@ private fun statusLabel(status: String): String = when (status) {
     else                 -> status.replaceFirstChar { it.uppercase() }
 }
 
-
 private val kyuSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red",    "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/9th-Kyu-Red-Belt-Syllabus.pdf"),
-    "Red"    to Pair("Yellow", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/6th-Kyu-Yellow-Belt-Syllabus.pdf"),
-    "Yellow" to Pair("Orange", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/5th-Kyu-Orange-Belt-Syllabus.pdf"),
-    "Orange" to Pair("Green",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/4th-Kyu-Green-Belt-Syllabus.pdf"),
-    "Green"  to Pair("Blue",   "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/3rd-Kyu-Blue-Belt-Syllabus.pdf"),
-    "Blue"   to Pair("Brown",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/2nd-Kyu-Brown-Belt-Syllabus.pdf")
+    "White"  to Pair("Red",    "https://www.judocoach.com/index.php/syllabus/kyu-grade/white-belt"),
+    "Red"    to Pair("Yellow", "https://www.judocoach.com/index.php/syllabus/kyu-grade/red-belt"),
+    "Yellow" to Pair("Orange", "https://www.judocoach.com/index.php/syllabus/kyu-grade/yellow-belt"),
+    "Orange" to Pair("Green",  "https://www.judocoach.com/index.php/syllabus/kyu-grade/orange-belt"),
+    "Green"  to Pair("Blue",   "https://www.judocoach.com/index.php/syllabus/kyu-grade/green-belt"),
+    "Blue"   to Pair("Brown",  "https://www.judocoach.com/index.php/syllabus/kyu-grade/blue-belt"),
 )
 
 private val monSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red (1st–3rd Mon)",     "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-1-3-Syllabus.pdf"),
-    "Red"    to Pair("Yellow (4th–6th Mon)",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-4-6-Syllabus.pdf"),
-    "Yellow" to Pair("Orange (7th–9th Mon)",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-7-9-Syllabus.pdf"),
-    "Orange" to Pair("Green (10th–12th Mon)", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-10-12-Syllabus.pdf"),
-    "Green"  to Pair("Blue (13th–15th Mon)",  "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-13-15-Syllabus.pdf"),
-    "Blue"   to Pair("Brown (16th–18th Mon)", "https://www.britishjudo.org.uk/wp-content/uploads/2022/09/Mon-16-18-Syllabus.pdf")
+    "White"  to Pair("Red (1st–3rd Mon)",     "https://www.judocoach.com/index.php/syllabus/mon-grade/white-belt"),
+    "Red"    to Pair("Yellow (4th–6th Mon)",  "https://www.judocoach.com/index.php/syllabus/mon-grade/red-belt"),
+    "Yellow" to Pair("Orange (7th–9th Mon)",  "https://www.judocoach.com/index.php/syllabus/mon-grade/yellow-belt"),
+    "Orange" to Pair("Green (10th–12th Mon)", "https://www.judocoach.com/index.php/syllabus/mon-grade/orange-belt"),
+    "Green"  to Pair("Blue (13th–15th Mon)",  "https://www.judocoach.com/index.php/syllabus/mon-grade/green-belt"),
+    "Blue"   to Pair("Brown (16th–18th Mon)", "https://www.judocoach.com/index.php/syllabus/mon-grade/blue-belt"),
 )
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradingScreen(
@@ -125,8 +125,13 @@ fun GradingScreen(
         containerColor = NavyBg,
         topBar = {
             TopAppBar(
-                title  = { Text("Grading", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = NavyBg)
+                title  = {
+                    Column {
+                        Text("Grading", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("British Judo Association", color = Color.White.copy(alpha = 0.4f), fontSize = 11.sp)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceBg)
             )
         },
         bottomBar = {
@@ -140,25 +145,23 @@ fun GradingScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding      = PaddingValues(top = 12.dp, bottom = 32.dp)
         ) {
 
-
+            // Current grade card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-                    shape    = RoundedCornerShape(12.dp)
+                    shape    = RoundedCornerShape(14.dp)
                 ) {
                     Column(
                         modifier            = Modifier.fillMaxWidth().padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (isUnder16) {
-                            Surface(
-                                shape = RoundedCornerShape(4.dp),
-                                color = Gold.copy(alpha = 0.15f)
-                            ) {
+                            Surface(shape = RoundedCornerShape(4.dp), color = Gold.copy(alpha = 0.15f)) {
                                 Text(
                                     "Junior · Mon Grade System",
                                     modifier   = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
@@ -174,6 +177,7 @@ fun GradingScreen(
                         Spacer(Modifier.height(16.dp))
                         Text("Current Grade", color = Color.LightGray, fontSize = 13.sp)
                         Spacer(Modifier.height(8.dp))
+
                         Surface(shape = RoundedCornerShape(8.dp), color = beltColor(currentBelt)) {
                             Text(
                                 currentBelt,
@@ -183,16 +187,14 @@ fun GradingScreen(
                                 fontSize   = 18.sp
                             )
                         }
+
                         Spacer(Modifier.height(8.dp))
+
                         if (nextGrade != null) {
                             Text("Next: $nextGrade", color = Color.LightGray, fontSize = 13.sp)
                         } else {
-                            Text(
-                                "最高段位 — Highest grade achieved",
-                                color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold
-                            )
+                            Text("最高段位 — Highest grade achieved", color = Gold, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                         }
-
 
                         if (cooldownMsg != null) {
                             Spacer(Modifier.height(8.dp))
@@ -200,23 +202,14 @@ fun GradingScreen(
                                 verticalAlignment     = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Icon(
-                                    Icons.Default.Timer,
-                                    contentDescription = null,
-                                    tint     = AppRed,
-                                    modifier = Modifier.size(14.dp)
-                                )
+                                Icon(Icons.Default.Timer, contentDescription = null, tint = AppRed, modifier = Modifier.size(14.dp))
                                 Text(cooldownMsg, color = AppRed, fontSize = 12.sp)
                             }
                         }
 
-
                         if (hasReadinessApproved) {
                             Spacer(Modifier.height(8.dp))
-                            Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = AppGreen.copy(alpha = 0.15f)
-                            ) {
+                            Surface(shape = RoundedCornerShape(6.dp), color = AppGreen.copy(alpha = 0.15f)) {
                                 Text(
                                     "✓ Coach approved — grading in progress",
                                     modifier   = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -234,7 +227,7 @@ fun GradingScreen(
                             enabled  = !isLoading && nextGrade != null && canRequest && !hasPending && !hasReadinessApproved,
                             colors   = ButtonDefaults.buttonColors(containerColor = AppRed),
                             modifier = Modifier.fillMaxWidth(),
-                            shape    = RoundedCornerShape(8.dp)
+                            shape    = RoundedCornerShape(10.dp)
                         ) {
                             if (isLoading) {
                                 CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
@@ -255,7 +248,7 @@ fun GradingScreen(
                 }
             }
 
-
+            // Message banner
             if (message != null) {
                 item {
                     Card(
@@ -268,13 +261,9 @@ fun GradingScreen(
                 }
             }
 
-
+            // Grading history
             item {
-                Text(
-                    "Grading History",
-                    color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                Text("Grading History", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
             }
 
             if (requests.isEmpty()) {
@@ -290,25 +279,18 @@ fun GradingScreen(
                 }
             }
 
-
+            // Next syllabus
             item {
-                Text(
-                    "Grading Syllabus",
-                    color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                Text("Grading Syllabus", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
             }
 
             if (syllabus != null) {
                 val (targetBelt, pdfUrl) = syllabus
                 item {
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-                                context.startActivity(intent)
-                            },
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl)))
+                        },
                         colors = CardDefaults.cardColors(containerColor = SurfaceBg),
                         shape  = RoundedCornerShape(10.dp),
                         border = androidx.compose.foundation.BorderStroke(1.dp, Gold)
@@ -318,25 +300,14 @@ fun GradingScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment     = Alignment.CenterVertically
                         ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalAlignment     = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.MenuBook,
-                                    contentDescription = null,
-                                    tint     = Gold,
-                                    modifier = Modifier.size(22.dp)
-                                )
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = Gold, modifier = Modifier.size(22.dp))
                                 Column {
                                     Text(
                                         "BJA ${if (isUnder16) "Mon" else "Kyu"} — $targetBelt",
                                         color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp
                                     )
-                                    Text(
-                                        "Your next grading — tap to open",
-                                        color = Gold, fontSize = 11.sp
-                                    )
+                                    Text("Your next grading — tap to open", color = Gold, fontSize = 11.sp)
                                 }
                             }
                             Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Gold, modifier = Modifier.size(18.dp))
@@ -345,7 +316,7 @@ fun GradingScreen(
                 }
             }
 
-
+            // Previous syllabuses
             item {
                 Text("Previous Syllabuses", color = Color.LightGray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
             }
@@ -364,8 +335,7 @@ fun GradingScreen(
                     val (targetBelt, pdfUrl) = pair
                     Card(
                         modifier = Modifier.fillMaxWidth().clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-                            context.startActivity(intent)
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl)))
                         },
                         colors = CardDefaults.cardColors(containerColor = SurfaceBg),
                         shape  = RoundedCornerShape(10.dp)
@@ -401,7 +371,7 @@ private fun GradingRequestCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(8.dp)
+        shape    = RoundedCornerShape(10.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
             Row(
@@ -420,7 +390,6 @@ private fun GradingRequestCard(
                             .format(java.util.Date(request.timestamp)),
                         color = Color.Gray, fontSize = 12.sp
                     )
-
                     Text(
                         if (request.stage == "readiness") "Stage 1: Readiness" else "Stage 2: Result",
                         color = Color.LightGray, fontSize = 11.sp
@@ -442,10 +411,7 @@ private fun GradingRequestCard(
 
             if (request.rejectionReason.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
-                Surface(
-                    shape = RoundedCornerShape(6.dp),
-                    color = AppRed.copy(alpha = 0.1f)
-                ) {
+                Surface(shape = RoundedCornerShape(6.dp), color = AppRed.copy(alpha = 0.1f)) {
                     Text(
                         "Reason: ${request.rejectionReason}",
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
