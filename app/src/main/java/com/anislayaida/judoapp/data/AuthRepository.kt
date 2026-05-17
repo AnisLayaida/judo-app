@@ -2,6 +2,7 @@ package com.anislayaida.judoapp.data
 
 import com.anislayaida.judoapp.data.user.User
 import com.anislayaida.judoapp.data.user.UserRepo
+import com.anislayaida.judoapp.data.user.UserRole
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
@@ -9,6 +10,7 @@ import javax.inject.Inject
 
 interface AuthRepo {
     val currentUser: FirebaseUser?
+    suspend fun getCurrentUserRole(): UserRole
     suspend fun createUserProfile(newUserDetails: User): Response
     fun getUserId(): String?
     suspend fun signInWithEmailAndPassword(email: String, password: String): Response
@@ -24,6 +26,16 @@ class AuthRepository @Inject constructor(
 ) : AuthRepo {
 
     override val currentUser get() = auth.currentUser
+
+    override suspend fun getCurrentUserRole(): UserRole {
+        val uid = auth.currentUser?.uid ?: return UserRole.UNKNOWN
+        return try {
+            val user = userRepository.getUserById(uid)
+            user?.role ?: UserRole.UNKNOWN
+        } catch (e: Exception) {
+            UserRole.UNKNOWN
+        }
+    }
 
     override suspend fun createUserProfile(newUserDetails: User): Response {
         return try {

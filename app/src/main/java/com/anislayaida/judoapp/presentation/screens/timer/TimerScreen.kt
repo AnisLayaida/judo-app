@@ -42,7 +42,8 @@ private val AmberWarn   = Color(0xFFF59E0B)
 @Composable
 fun TimerScreen(
     userRole: UserRole = UserRole.JUDOKA,
-    navController: NavController? = null
+    navController: NavController? = null,
+    isCompact: Boolean = true
 ) {
     val durationOptions = listOf(
         "4:00" to 240,
@@ -100,9 +101,9 @@ fun TimerScreen(
                     Column {
                         Text(
                             "柔道  Timer",
-                            color      = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize   = 18.sp,
+                            color         = Color.White,
+                            fontWeight    = FontWeight.Bold,
+                            fontSize      = 18.sp,
                             letterSpacing = 0.5.sp
                         )
                         Text(
@@ -116,7 +117,7 @@ fun TimerScreen(
             )
         },
         bottomBar = {
-            if (navController != null) {
+            if (isCompact && navController != null) {
                 BottomNavBar(userRole = userRole, navController = navController)
             }
         }
@@ -128,8 +129,6 @@ fun TimerScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            
             Row(
                 modifier              = Modifier
                     .fillMaxWidth()
@@ -152,9 +151,9 @@ fun TimerScreen(
                             .clickable {
                                 if (!isRunning) {
                                     selectedDurationIndex = index
-                                    totalSeconds     = durationOptions[index].second
-                                    remainingSeconds = durationOptions[index].second
-                                    isFinished       = false
+                                    totalSeconds          = durationOptions[index].second
+                                    remainingSeconds      = durationOptions[index].second
+                                    isFinished            = false
                                 }
                             }
                             .padding(vertical = 10.dp),
@@ -174,34 +173,30 @@ fun TimerScreen(
 
             Spacer(Modifier.height(40.dp))
 
-            
             Box(
                 contentAlignment = Alignment.Center,
                 modifier         = Modifier.size(280.dp)
             ) {
-                
                 CircularProgressIndicator(
-                    progress      = { 1f },
-                    modifier      = Modifier.fillMaxSize(),
-                    color         = Color.White.copy(alpha = 0.06f),
-                    strokeWidth   = 14.dp,
-                    strokeCap     = StrokeCap.Round
+                    progress    = { 1f },
+                    modifier    = Modifier.fillMaxSize(),
+                    color       = Color.White.copy(alpha = 0.06f),
+                    strokeWidth = 14.dp,
+                    strokeCap   = StrokeCap.Round
                 )
-                
                 CircularProgressIndicator(
-                    progress      = { progress },
-                    modifier      = Modifier.fillMaxSize(),
-                    color         = timerColor,
-                    strokeWidth   = 14.dp,
-                    strokeCap     = StrokeCap.Round
+                    progress    = { progress },
+                    modifier    = Modifier.fillMaxSize(),
+                    color       = timerColor,
+                    strokeWidth = 14.dp,
+                    strokeCap   = StrokeCap.Round
                 )
-                
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text       = timeString,
-                        color      = timerColor,
-                        fontSize   = 62.sp,
-                        fontWeight = FontWeight.Bold,
+                        text          = timeString,
+                        color         = timerColor,
+                        fontSize      = 62.sp,
+                        fontWeight    = FontWeight.Bold,
                         letterSpacing = (-1).sp
                     )
                     Spacer(Modifier.height(4.dp))
@@ -216,7 +211,6 @@ fun TimerScreen(
 
             Spacer(Modifier.height(40.dp))
 
-            
             Row(
                 modifier              = Modifier
                     .fillMaxWidth()
@@ -224,9 +218,8 @@ fun TimerScreen(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 verticalAlignment     = Alignment.CenterVertically
             ) {
-                
                 Box(
-                    modifier         = Modifier
+                    modifier = Modifier
                         .size(58.dp)
                         .clip(CircleShape)
                         .background(SurfaceBg)
@@ -246,7 +239,6 @@ fun TimerScreen(
                     )
                 }
 
-                
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -274,8 +266,7 @@ fun TimerScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Icon(
-                            imageVector        = if (isRunning) Icons.Default.Pause
-                            else Icons.Default.PlayArrow,
+                            imageVector        = if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
                             contentDescription = null,
                             tint               = when {
                                 isFinished -> Color.White.copy(alpha = 0.3f)
@@ -308,15 +299,15 @@ fun TimerScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
-                colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-                shape    = RoundedCornerShape(14.dp)
+                colors = CardDefaults.cardColors(containerColor = SurfaceBg),
+                shape  = RoundedCornerShape(14.dp)
             ) {
                 Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
                     Text(
                         "BJA Match Times",
-                        color      = Gold,
-                        fontWeight = FontWeight.Bold,
-                        fontSize   = 13.sp,
+                        color         = Gold,
+                        fontWeight    = FontWeight.Bold,
+                        fontSize      = 13.sp,
                         letterSpacing = 0.5.sp
                     )
                     Spacer(Modifier.height(14.dp))
@@ -348,14 +339,13 @@ fun TimerScreen(
                             verticalAlignment     = Alignment.CenterVertically
                         ) {
                             Text(
-                                text  = label,
-                                color = Color.White.copy(alpha = 0.7f),
+                                text     = label,
+                                color    = Color.White.copy(alpha = 0.7f),
                                 fontSize = 13.sp
                             )
                             Text(
                                 text       = time,
-                                color      = if (selectedDurationIndex == index) Gold
-                                else Color.White.copy(alpha = 0.4f),
+                                color      = if (selectedDurationIndex == index) Gold else Color.White.copy(alpha = 0.4f),
                                 fontSize   = 13.sp,
                                 fontWeight = FontWeight.Bold
                             )

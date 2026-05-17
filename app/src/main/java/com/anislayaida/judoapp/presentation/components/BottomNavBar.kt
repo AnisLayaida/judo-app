@@ -24,7 +24,7 @@ data class BottomNavItem(
     val icon: ImageVector
 )
 
-private fun itemsForRole(userRole: UserRole): List<BottomNavItem> = when (userRole) {
+internal fun itemsForRole(userRole: UserRole): List<BottomNavItem> = when (userRole) {
     UserRole.JUDOKA -> listOf(
         BottomNavItem(NavScreen.HOME,    "Syllabus", Icons.Default.List),
         BottomNavItem(NavScreen.GRADING, "Grading",  Icons.Default.Star),

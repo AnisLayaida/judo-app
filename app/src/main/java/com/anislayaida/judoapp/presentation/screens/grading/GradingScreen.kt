@@ -94,6 +94,7 @@ private val monSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
 fun GradingScreen(
     userRole: UserRole = UserRole.JUDOKA,
     navController: NavController? = null,
+    isCompact: Boolean = true,
     vm: GradingViewModel = hiltViewModel()
 ) {
     val currentBelt by vm.currentBelt.collectAsStateWithLifecycle()
@@ -135,7 +136,7 @@ fun GradingScreen(
             )
         },
         bottomBar = {
-            if (navController != null) {
+            if (isCompact && navController != null) {
                 BottomNavBar(userRole = userRole, navController = navController)
             }
         }
@@ -149,7 +150,6 @@ fun GradingScreen(
             contentPadding      = PaddingValues(top = 12.dp, bottom = 32.dp)
         ) {
 
-            // Current grade card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -248,7 +248,6 @@ fun GradingScreen(
                 }
             }
 
-            // Message banner
             if (message != null) {
                 item {
                     Card(
@@ -261,7 +260,6 @@ fun GradingScreen(
                 }
             }
 
-            // Grading history
             item {
                 Text("Grading History", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
             }
@@ -279,7 +277,6 @@ fun GradingScreen(
                 }
             }
 
-            // Next syllabus
             item {
                 Text("Grading Syllabus", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
             }
@@ -316,7 +313,6 @@ fun GradingScreen(
                 }
             }
 
-            // Previous syllabuses
             item {
                 Text("Previous Syllabuses", color = Color.LightGray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
             }

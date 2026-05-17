@@ -35,7 +35,6 @@ private val Gold      = Color(0xFFC9A84C)
 private val AppRed    = Color(0xFFC8102E)
 private val AppGreen  = Color(0xFF22C55E)
 
-
 private val beltOrder = listOf("White", "Red", "Yellow", "Orange", "Green", "Blue", "Brown", "Black")
 
 private fun beltColor(belt: String): Color = when {
@@ -64,6 +63,7 @@ fun CoachHomeScreen(
     userRole: UserRole = UserRole.COACH,
     navController: NavController? = null,
     modifier: Modifier = Modifier,
+    isCompact: Boolean = true,
     vm: CoachHomeViewModel = hiltViewModel()
 ) {
     val gradingRequests by vm.gradingRequests.collectAsStateWithLifecycle()
@@ -95,17 +95,8 @@ fun CoachHomeScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            "Coach Panel",
-                            color      = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize   = 18.sp
-                        )
-                        Text(
-                            "myJudo Companion",
-                            color    = Color.White.copy(alpha = 0.4f),
-                            fontSize = 11.sp
-                        )
+                        Text("Coach Panel", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("myJudo Companion", color = Color.White.copy(alpha = 0.4f), fontSize = 11.sp)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceBg)
@@ -123,7 +114,7 @@ fun CoachHomeScreen(
             }
         },
         bottomBar = {
-            if (navController != null) {
+            if (isCompact && navController != null) {
                 BottomNavBar(userRole = userRole, navController = navController)
             }
         }
@@ -132,26 +123,16 @@ fun CoachHomeScreen(
 
             if (message != null) {
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    colors = CardDefaults.cardColors(containerColor = SurfaceBg),
-                    shape  = RoundedCornerShape(8.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                    colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
+                    shape    = RoundedCornerShape(8.dp)
                 ) {
-                    Text(
-                        message!!,
-                        modifier = Modifier.padding(14.dp),
-                        color    = Gold,
-                        fontSize = 14.sp
-                    )
+                    Text(message!!, modifier = Modifier.padding(14.dp), color = Gold, fontSize = 14.sp)
                 }
             }
 
-            
             Row(
-                modifier              = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier              = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 StatCard("Techniques", techniqueCount, Gold,     Modifier.weight(1f))
@@ -164,7 +145,6 @@ fun CoachHomeScreen(
                 )
             }
 
-            
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor   = NavyBg,
@@ -186,11 +166,7 @@ fun CoachHomeScreen(
                                 badge = {
                                     if (showBadge) {
                                         Badge(containerColor = AppRed) {
-                                            Text(
-                                                pendingCount.toString(),
-                                                fontSize = 9.sp,
-                                                color    = Color.White
-                                            )
+                                            Text(pendingCount.toString(), fontSize = 9.sp, color = Color.White)
                                         }
                                     }
                                 }
@@ -230,12 +206,7 @@ fun CoachHomeScreen(
 }
 
 @Composable
-private fun StatCard(
-    label: String,
-    value: Int,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
+private fun StatCard(label: String, value: Int, color: Color, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
@@ -259,7 +230,6 @@ private fun LibraryTab(
     onSearchChanged: (String) -> Unit,
     onEditTechnique: (String) -> Unit
 ) {
-    
     val grouped = remember(techniques) {
         val map = techniques.groupBy { it.beltLevel }
         beltOrder.mapNotNull { belt ->
@@ -273,13 +243,9 @@ private fun LibraryTab(
             value         = searchQuery,
             onValueChange = onSearchChanged,
             placeholder   = { Text("Search techniques…", color = Color.Gray) },
-            leadingIcon   = {
-                Icon(Icons.Default.Search, contentDescription = null, tint = Gold)
-            },
-            modifier   = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            colors     = OutlinedTextFieldDefaults.colors(
+            leadingIcon   = { Icon(Icons.Default.Search, contentDescription = null, tint = Gold) },
+            modifier      = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+            colors        = OutlinedTextFieldDefaults.colors(
                 focusedTextColor     = Color.White,
                 unfocusedTextColor   = Color.White,
                 focusedBorderColor   = Gold,
@@ -295,27 +261,17 @@ private fun LibraryTab(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
         ) {
             if (searchQuery.isBlank()) {
-                
                 grouped.forEach { (belt, list) ->
-                    item(key = "header_$belt") {
-                        BeltSectionHeader(belt = belt, count = list.size)
-                    }
+                    item(key = "header_$belt") { BeltSectionHeader(belt = belt, count = list.size) }
                     items(list, key = { it.uid }) { technique ->
-                        TechniqueRow(
-                            technique = technique,
-                            onEdit    = { onEditTechnique(technique.uid) }
-                        )
+                        TechniqueRow(technique = technique, onEdit = { onEditTechnique(technique.uid) })
                         Spacer(Modifier.height(6.dp))
                     }
                     item(key = "spacer_$belt") { Spacer(Modifier.height(8.dp)) }
                 }
             } else {
-                
                 items(techniques, key = { it.uid }) { technique ->
-                    TechniqueRow(
-                        technique = technique,
-                        onEdit    = { onEditTechnique(technique.uid) }
-                    )
+                    TechniqueRow(technique = technique, onEdit = { onEditTechnique(technique.uid) })
                     Spacer(Modifier.height(6.dp))
                 }
             }
@@ -327,39 +283,17 @@ private fun LibraryTab(
 @Composable
 private fun BeltSectionHeader(belt: String, count: Int) {
     Row(
-        modifier              = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 6.dp),
+        modifier              = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 6.dp),
         verticalAlignment     = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            verticalAlignment     = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Surface(
-                shape = RoundedCornerShape(4.dp),
-                color = beltColor(belt)
-            ) {
-                Text(
-                    belt,
-                    modifier   = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                    color      = beltTextColor(belt),
-                    fontSize   = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Surface(shape = RoundedCornerShape(4.dp), color = beltColor(belt)) {
+                Text(belt, modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp), color = beltTextColor(belt), fontSize = 11.sp, fontWeight = FontWeight.Bold)
             }
-            Text(
-                "Belt",
-                color    = Color.White.copy(alpha = 0.5f),
-                fontSize = 12.sp
-            )
+            Text("Belt", color = Color.White.copy(alpha = 0.5f), fontSize = 12.sp)
         }
-        Text(
-            "$count techniques",
-            color    = Color.White.copy(alpha = 0.3f),
-            fontSize = 11.sp
-        )
+        Text("$count techniques", color = Color.White.copy(alpha = 0.3f), fontSize = 11.sp)
     }
 }
 
@@ -376,24 +310,11 @@ private fun TechniqueRow(technique: Technique, onEdit: () -> Unit) {
             verticalAlignment     = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    technique.name,
-                    color      = Color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize   = 14.sp
-                )
+                Text(technique.name, color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                 Spacer(Modifier.height(2.dp))
-                Text(
-                    "${technique.category} · ${technique.subcategory}",
-                    color    = Color.LightGray,
-                    fontSize = 12.sp
-                )
+                Text("${technique.category} · ${technique.subcategory}", color = Color.LightGray, fontSize = 12.sp)
             }
-            Text(
-                technique.nameJapanese,
-                color    = Gold.copy(alpha = 0.6f),
-                fontSize = 13.sp
-            )
+            Text(technique.nameJapanese, color = Gold.copy(alpha = 0.6f), fontSize = 13.sp)
         }
     }
 }
@@ -433,13 +354,7 @@ private fun JudokaRow(user: User) {
                 Text(user.judoClub.ifEmpty { "No club" }, color = Color.LightGray, fontSize = 12.sp)
             }
             Surface(shape = RoundedCornerShape(6.dp), color = beltColor(user.beltGrade)) {
-                Text(
-                    user.beltGrade,
-                    modifier   = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                    color      = beltTextColor(user.beltGrade),
-                    fontSize   = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(user.beltGrade, modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp), color = beltTextColor(user.beltGrade), fontSize = 11.sp, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -503,20 +418,14 @@ private fun GradingRequestRow(
                     Spacer(Modifier.height(4.dp))
                     rejectionReasons.forEach { reason ->
                         Row(
-                            modifier              = Modifier
-                                .fillMaxWidth()
-                                .clickable { selectedReason = reason }
-                                .padding(vertical = 4.dp),
+                            modifier              = Modifier.fillMaxWidth().clickable { selectedReason = reason }.padding(vertical = 4.dp),
                             verticalAlignment     = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             RadioButton(
                                 selected = selectedReason == reason,
                                 onClick  = { selectedReason = reason },
-                                colors   = RadioButtonDefaults.colors(
-                                    selectedColor   = Gold,
-                                    unselectedColor = Color.Gray
-                                )
+                                colors   = RadioButtonDefaults.colors(selectedColor = Gold, unselectedColor = Color.Gray)
                             )
                             Text(reason, color = Color.White, fontSize = 13.sp)
                         }
@@ -526,19 +435,14 @@ private fun GradingRequestRow(
             confirmButton = {
                 Button(
                     onClick  = {
-                        if (selectedReason.isNotBlank()) {
-                            onReject(selectedReason)
-                            showRejectDialog = false
-                        }
+                        if (selectedReason.isNotBlank()) { onReject(selectedReason); showRejectDialog = false }
                     },
                     enabled  = selectedReason.isNotBlank(),
                     colors   = ButtonDefaults.buttonColors(containerColor = AppRed)
                 ) { Text("Reject", color = Color.White) }
             },
             dismissButton = {
-                TextButton(onClick = { showRejectDialog = false }) {
-                    Text("Cancel", color = Gold)
-                }
+                TextButton(onClick = { showRejectDialog = false }) { Text("Cancel", color = Gold) }
             }
         )
     }

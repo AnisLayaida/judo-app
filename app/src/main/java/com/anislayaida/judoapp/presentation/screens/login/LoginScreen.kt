@@ -36,21 +36,19 @@ fun LoginScreen(
     vm: LoginViewModel = hiltViewModel(),
     updateRoleForUser: (UserRole) -> Unit,
     navigateToSignUpScreen: () -> Unit,
-    navigateToHomeScreen: () -> Unit
+    navigateToHomeScreen: (UserRole) -> Unit
 ) {
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val keyboard = LocalSoftwareKeyboardController.current
 
-    
     LaunchedEffect(uiState.navigateToHome) {
         if (uiState.navigateToHome) {
             updateRoleForUser(uiState.userRole)
-            navigateToHomeScreen()
+            navigateToHomeScreen(uiState.userRole)
         }
     }
 
-    
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -58,7 +56,7 @@ fun LoginScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost   = { SnackbarHost(snackbarHostState) },
         containerColor = NavyBg
     ) { padding ->
         Box(
@@ -76,7 +74,6 @@ fun LoginScreen(
             ) {
                 Spacer(Modifier.height(60.dp))
 
-                
                 Box(
                     modifier = Modifier
                         .size(80.dp)
@@ -91,8 +88,8 @@ fun LoginScreen(
                 ) {
                     Text(
                         "柔",
-                        color = Color.White,
-                        fontSize = 36.sp,
+                        color      = Color.White,
+                        fontSize   = 36.sp,
                         fontWeight = FontWeight.Light
                     )
                 }
@@ -101,81 +98,75 @@ fun LoginScreen(
 
                 Text(
                     "myJudo",
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
+                    color         = Color.White,
+                    fontSize      = 28.sp,
+                    fontWeight    = FontWeight.Bold,
                     letterSpacing = 1.sp
                 )
                 Text(
                     "C O M P A N I O N   A P P",
-                    color = Color.LightGray,
-                    fontSize = 11.sp,
+                    color         = Color.LightGray,
+                    fontSize      = 11.sp,
                     letterSpacing = 3.sp
                 )
 
                 Spacer(Modifier.height(48.dp))
 
-                
                 FieldLabel("Email")
                 Spacer(Modifier.height(6.dp))
                 StyledTextField(
-                    value = uiState.email,
+                    value         = uiState.email,
                     onValueChange = vm::onEmailChange,
-                    placeholder = "your@email.com",
-                    isPassword = false
+                    placeholder   = "your@email.com",
+                    isPassword    = false
                 )
 
                 Spacer(Modifier.height(16.dp))
 
-                
                 FieldLabel("Password")
                 Spacer(Modifier.height(6.dp))
                 StyledTextField(
-                    value = uiState.password,
+                    value         = uiState.password,
                     onValueChange = vm::onPasswordChange,
-                    placeholder = "••••••••",
-                    isPassword = true
+                    placeholder   = "••••••••",
+                    isPassword    = true
                 )
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(16.dp))
 
-                Spacer(Modifier.height(8.dp))
-
-                
                 Button(
                     onClick = {
                         keyboard?.hide()
                         vm.signIn()
                     },
-                    enabled = !uiState.isLoading,
+                    enabled  = !uiState.isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    shape = RoundedCornerShape(10.dp),
+                    shape  = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = AppRed)
                 ) {
                     if (uiState.isLoading) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = Color.White,
+                            modifier    = Modifier.size(20.dp),
+                            color       = Color.White,
                             strokeWidth = 2.dp
                         )
                     } else {
                         Text(
                             "Sign In",
-                            color = Color.White,
+                            color      = Color.White,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
+                            fontSize   = 16.sp
                         )
                     }
                 }
 
                 Spacer(Modifier.height(20.dp))
 
-                
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier          = Modifier.fillMaxWidth()
                 ) {
                     HorizontalDivider(modifier = Modifier.weight(1f), color = FieldBorder)
                     Text("  or  ", color = Color.Gray, fontSize = 13.sp)
@@ -184,13 +175,12 @@ fun LoginScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                
                 OutlinedButton(
-                    onClick = navigateToSignUpScreen,
+                    onClick  = navigateToSignUpScreen,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    shape = RoundedCornerShape(10.dp),
+                    shape  = RoundedCornerShape(10.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, FieldBorder)
                 ) {
                     Text("Create an Account", color = Color.White, fontSize = 15.sp)
@@ -198,21 +188,20 @@ fun LoginScreen(
 
                 Spacer(Modifier.weight(1f))
 
-                
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(bottom = 32.dp)
+                    modifier            = Modifier.padding(bottom = 32.dp)
                 ) {
                     Text(
                         "British Judo Association",
-                        color = Color.Gray,
-                        fontSize = 11.sp,
+                        color         = Color.Gray,
+                        fontSize      = 11.sp,
                         letterSpacing = 1.sp
                     )
                     Spacer(Modifier.height(6.dp))
                     Row(
                         horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier              = Modifier.fillMaxWidth()
                     ) {
                         Box(Modifier.size(24.dp, 2.dp).background(AppRed))
                         Spacer(Modifier.width(2.dp))
@@ -232,10 +221,10 @@ fun LoginScreen(
 private fun FieldLabel(text: String) {
     Text(
         text,
-        color = Gold,
-        fontSize = 13.sp,
+        color     = Gold,
+        fontSize  = 13.sp,
         fontWeight = FontWeight.Medium,
-        modifier = Modifier.fillMaxWidth()
+        modifier  = Modifier.fillMaxWidth()
     )
 }
 
@@ -247,20 +236,20 @@ private fun StyledTextField(
     isPassword: Boolean
 ) {
     OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = { Text(placeholder, color = Color.Gray, fontSize = 14.sp) },
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
+        value                = value,
+        onValueChange        = onValueChange,
+        placeholder          = { Text(placeholder, color = Color.Gray, fontSize = 14.sp) },
+        modifier             = Modifier.fillMaxWidth(),
+        shape                = RoundedCornerShape(10.dp),
         visualTransformation = if (isPassword) PasswordVisualTransformation()
         else VisualTransformation.None,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            focusedBorderColor = Gold,
-            unfocusedBorderColor = FieldBorder,
-            cursorColor = Gold,
-            focusedContainerColor = SurfaceBg,
+            focusedTextColor        = Color.White,
+            unfocusedTextColor      = Color.White,
+            focusedBorderColor      = Gold,
+            unfocusedBorderColor    = FieldBorder,
+            cursorColor             = Gold,
+            focusedContainerColor   = SurfaceBg,
             unfocusedContainerColor = SurfaceBg
         ),
         singleLine = true
