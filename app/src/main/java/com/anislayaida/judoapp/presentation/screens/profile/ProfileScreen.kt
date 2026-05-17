@@ -23,7 +23,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.anislayaida.judoapp.data.user.UserRole
 import com.anislayaida.judoapp.navigation.NavScreen
-import com.anislayaida.judoapp.presentation.components.BottomNavBar
 
 private val NavyBg    = Color(0xFF0D1B3E)
 private val SurfaceBg = Color(0xFF1A2B55)
@@ -95,7 +94,6 @@ private fun formatDateOfBirth(raw: String): String {
 fun ProfileScreen(
     userRole: UserRole = UserRole.JUDOKA,
     navController: NavController? = null,
-    isCompact: Boolean = true,
     vm: ProfileViewModel = hiltViewModel()
 ) {
     val user      by vm.user.collectAsStateWithLifecycle()
@@ -117,14 +115,10 @@ fun ProfileScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = AppRed)
-                ) {
-                    Text("Sign Out", color = Color.White)
-                }
+                ) { Text("Sign Out", color = Color.White) }
             },
             dismissButton = {
-                TextButton(onClick = { showLogout = false }) {
-                    Text("Cancel", color = Gold)
-                }
+                TextButton(onClick = { showLogout = false }) { Text("Cancel", color = Gold) }
             }
         )
     }
@@ -141,18 +135,10 @@ fun ProfileScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceBg)
             )
-        },
-        bottomBar = {
-            if (isCompact && navController != null) {
-                BottomNavBar(userRole = userRole, navController = navController)
-            }
         }
     ) { padding ->
         if (isLoading) {
-            Box(
-                modifier         = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Gold)
             }
         } else {
@@ -166,42 +152,24 @@ fun ProfileScreen(
             ) {
                 Spacer(Modifier.height(8.dp))
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-                    shape    = RoundedCornerShape(14.dp)
-                ) {
-                    Column(
-                        modifier            = Modifier.fillMaxWidth().padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(14.dp)) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         val belt = user?.beltGrade ?: "White"
                         Box(
                             modifier = Modifier
                                 .size(84.dp)
                                 .clip(CircleShape)
                                 .background(beltAvatarBg(belt))
-                                .then(
-                                    if (belt == "White")
-                                        Modifier.border(1.dp, Color.Gray, CircleShape)
-                                    else Modifier
-                                ),
+                                .then(if (belt == "White") Modifier.border(1.dp, Color.Gray, CircleShape) else Modifier),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text       = getInitials(user?.fullName ?: ""),
-                                color      = beltTagText(belt),
-                                fontSize   = 28.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text(text = getInitials(user?.fullName ?: ""), color = beltTagText(belt), fontSize = 28.sp, fontWeight = FontWeight.Bold)
                         }
-
                         Spacer(Modifier.height(14.dp))
                         Text(user?.fullName ?: "—", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                         Spacer(Modifier.height(4.dp))
                         Text(user?.email ?: "—", color = Color.White.copy(alpha = 0.5f), fontSize = 13.sp)
                         Spacer(Modifier.height(10.dp))
-
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(6.dp))
@@ -220,11 +188,7 @@ fun ProfileScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
                             .background(beltTagBg(belt))
-                            .then(
-                                if (belt.startsWith("Black"))
-                                    Modifier.border(0.5.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(6.dp))
-                                else Modifier
-                            )
+                            .then(if (belt.startsWith("Black")) Modifier.border(0.5.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(6.dp)) else Modifier)
                             .padding(horizontal = 14.dp, vertical = 7.dp)
                     ) {
                         Text(belt, color = beltTagText(belt), fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -260,11 +224,7 @@ fun ProfileScreen(
 
 @Composable
 private fun ProfileInfoCard(title: String, content: @Composable () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(14.dp)
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(14.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp, letterSpacing = 0.5.sp)
             Spacer(Modifier.height(12.dp))
@@ -275,11 +235,7 @@ private fun ProfileInfoCard(title: String, content: @Composable () -> Unit) {
 
 @Composable
 private fun ProfileRow(label: String, value: String) {
-    Row(
-        modifier              = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment     = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         Text(label, color = Color.LightGray, fontSize = 14.sp)
         Text(value, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
     }

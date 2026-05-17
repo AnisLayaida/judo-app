@@ -26,11 +26,15 @@ class SignUpNavigationTest {
     fun setUp() {
         hiltRule.inject()
         rule.onNode(hasText("Create an Account") and hasClickAction()).performClick()
+        rule.waitForIdle()
     }
 
     @Test
     fun sign_in_link_navigates_back_to_login_screen() {
-        rule.onNode(hasText("Sign in") and hasClickAction()).performClick()
+        rule.onNodeWithText("Sign in").performScrollTo()
+        rule.waitForIdle()
+        rule.onNodeWithText("Sign in").performClick()
+        rule.waitForIdle()
         rule.onNodeWithText("myJudo").assertIsDisplayed()
     }
 }

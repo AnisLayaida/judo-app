@@ -21,7 +21,7 @@ class TimerStateTest {
     fun clicking_start_changes_status_to_match_running() {
         rule.onNode(hasText("Start") and hasClickAction()).performClick()
         rule.waitForIdle()
-        rule.onNodeWithText("試合中 · Match Running").assertIsDisplayed()
+        rule.onNodeWithText("試合中  ·  Match Running").assertIsDisplayed()
     }
 
     @Test
@@ -37,7 +37,7 @@ class TimerStateTest {
         rule.waitForIdle()
         rule.onNodeWithContentDescription("Reset").performClick()
         rule.waitForIdle()
-        rule.onNodeWithText("準備 · Ready").assertIsDisplayed()
+        rule.onNodeWithText("準備  ·  Ready").assertIsDisplayed()
     }
 
     @Test

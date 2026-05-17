@@ -28,7 +28,6 @@ import com.anislayaida.judoapp.data.technique.Technique
 import com.anislayaida.judoapp.data.user.User
 import com.anislayaida.judoapp.data.user.UserRole
 import com.anislayaida.judoapp.navigation.NavScreen
-import com.anislayaida.judoapp.presentation.components.BottomNavBar
 import com.anislayaida.judoapp.ui.theme.Gold
 import com.anislayaida.judoapp.ui.theme.Navy
 import com.anislayaida.judoapp.ui.theme.SurfaceBlue
@@ -72,7 +71,7 @@ private val beltTagTextMap: Map<String, Color> = mapOf(
     "Black"  to Color(0xFFFFFFFF),
 )
 
-private fun beltColor(grade: String): Color = beltColourMap[grade] ?: Color(0xFFEEEEEE)
+private fun beltColor(grade: String): Color  = beltColourMap[grade] ?: Color(0xFFEEEEEE)
 private fun beltTagBg(grade: String): Color  = beltTagBgMap[grade]  ?: Color(0xFFDDDDDD)
 private fun beltTagText(grade: String): Color = beltTagTextMap[grade] ?: Color(0xFF222222)
 
@@ -84,7 +83,6 @@ private const val NE_WAZA   = "Ne-waza"
 fun HomeScreen(
     navController: NavController,
     userRole: UserRole,
-    isCompact: Boolean,
     vm: HomeViewModel = hiltViewModel()
 ) {
     val currentUser    by vm.currentUser.collectAsStateWithLifecycle()
@@ -97,12 +95,7 @@ fun HomeScreen(
     val neWaza   = techniques.filter { it.category == NE_WAZA }
 
     Scaffold(
-        topBar        = { HomeTopBar(user = currentUser) },
-        bottomBar     = {
-            if (isCompact) {
-                BottomNavBar(userRole = userRole, navController = navController)
-            }
-        },
+        topBar         = { HomeTopBar(user = currentUser) },
         containerColor = Navy
     ) { padding ->
         Column(
@@ -133,9 +126,7 @@ fun HomeScreen(
                     }
                 } else {
                     if (nageWaza.isNotEmpty()) {
-                        item {
-                            TechniqueSectionHeader(label = "Nage-waza", count = nageWaza.size)
-                        }
+                        item { TechniqueSectionHeader(label = "Nage-waza", count = nageWaza.size) }
                         items(nageWaza, key = { it.uid }) { technique ->
                             TechniqueRow(
                                 technique = technique,
@@ -149,9 +140,7 @@ fun HomeScreen(
                     }
 
                     if (neWaza.isNotEmpty()) {
-                        item {
-                            TechniqueSectionHeader(label = "Ne-waza", count = neWaza.size)
-                        }
+                        item { TechniqueSectionHeader(label = "Ne-waza", count = neWaza.size) }
                         items(neWaza, key = { it.uid }) { technique ->
                             TechniqueRow(
                                 technique = technique,
@@ -251,9 +240,9 @@ private fun BeltFilterRow(
         belts.forEach { belt ->
             val isSelected = selectedBelt == belt
             FilterChip(
-                selected = isSelected,
-                onClick  = { onBeltSelected(belt) },
-                label    = { Text(belt, fontSize = 12.sp) },
+                selected    = isSelected,
+                onClick     = { onBeltSelected(belt) },
+                label       = { Text(belt, fontSize = 12.sp) },
                 leadingIcon = {
                     Box(
                         modifier = Modifier
@@ -302,9 +291,9 @@ private fun TechniqueSectionHeader(label: String, count: Int) {
             verticalAlignment     = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(text = label, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White.copy(alpha = 0.9f), letterSpacing = 0.5.sp)
-            Text(text = "·", fontSize = 13.sp, color = Color.White.copy(alpha = 0.3f))
-            Text(text = englishTranslation, fontSize = 13.sp, color = Color.White.copy(alpha = 0.4f))
+            Text(text = label,               fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.White.copy(alpha = 0.9f), letterSpacing = 0.5.sp)
+            Text(text = "·",                 fontSize = 13.sp, color = Color.White.copy(alpha = 0.3f))
+            Text(text = englishTranslation,  fontSize = 13.sp, color = Color.White.copy(alpha = 0.4f))
         }
         Text(text = "$count", fontSize = 12.sp, color = Color.White.copy(alpha = 0.3f))
     }

@@ -26,6 +26,7 @@ class SignUpDisplayTest {
     fun setUp() {
         hiltRule.inject()
         rule.onNode(hasText("Create an Account") and hasClickAction()).performClick()
+        rule.waitForIdle()
     }
 
     @Test
@@ -43,6 +44,8 @@ class SignUpDisplayTest {
 
     @Test
     fun register_button_is_displayed_and_clickable() {
+        rule.onNode(hasText("Register") and hasClickAction()).performScrollTo()
+        rule.waitForIdle()
         rule.onNode(hasText("Register") and hasClickAction()).assertIsDisplayed()
         rule.onNode(hasText("Register") and hasClickAction()).assertHasClickAction()
     }

@@ -29,9 +29,9 @@ class TimerControlsTest {
 
     @Test
     fun duration_chips_are_displayed() {
-        rule.onNode(hasText("4:00") and hasClickAction()).assertExists()
-        rule.onNode(hasText("3:00") and hasClickAction()).assertExists()
-        rule.onNode(hasText("2:00") and hasClickAction()).assertExists()
-        rule.onNode(hasText("1:00") and hasClickAction()).assertExists()
+        rule.onAllNodes(hasText("4:00") and hasClickAction()).onFirst().assertExists()
+        rule.onAllNodes(hasText("3:00") and hasClickAction()).onFirst().assertExists()
+        rule.onAllNodes(hasText("2:00") and hasClickAction()).onFirst().assertExists()
+        rule.onAllNodes(hasText("1:00") and hasClickAction()).onFirst().assertExists()
     }
 }

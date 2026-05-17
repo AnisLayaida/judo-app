@@ -27,23 +27,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.anislayaida.judoapp.data.user.UserRole
-import com.anislayaida.judoapp.presentation.components.BottomNavBar
 import kotlinx.coroutines.delay
 
-private val NavyBg      = Color(0xFF0D1B3E)
-private val SurfaceBg   = Color(0xFF1A2B55)
-private val SurfaceMid  = Color(0xFF152444)
-private val Gold        = Color(0xFFC9A84C)
-private val AppRed      = Color(0xFFC8102E)
-private val AppGreen    = Color(0xFF22C55E)
-private val AmberWarn   = Color(0xFFF59E0B)
+private val NavyBg     = Color(0xFF0D1B3E)
+private val SurfaceBg  = Color(0xFF1A2B55)
+private val SurfaceMid = Color(0xFF152444)
+private val Gold       = Color(0xFFC9A84C)
+private val AppRed     = Color(0xFFC8102E)
+private val AppGreen   = Color(0xFF22C55E)
+private val AmberWarn  = Color(0xFFF59E0B)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerScreen(
     userRole: UserRole = UserRole.JUDOKA,
-    navController: NavController? = null,
-    isCompact: Boolean = true
+    navController: NavController? = null
 ) {
     val durationOptions = listOf(
         "4:00" to 240,
@@ -63,7 +61,7 @@ fun TimerScreen(
             delay(1000L)
             remainingSeconds--
             if (remainingSeconds == 0) {
-                isRunning = false
+                isRunning  = false
                 isFinished = true
             }
         }
@@ -99,27 +97,12 @@ fun TimerScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            "柔道  Timer",
-                            color         = Color.White,
-                            fontWeight    = FontWeight.Bold,
-                            fontSize      = 18.sp,
-                            letterSpacing = 0.5.sp
-                        )
-                        Text(
-                            "British Judo Association",
-                            color    = Color.White.copy(alpha = 0.4f),
-                            fontSize = 11.sp
-                        )
+                        Text("柔道  Timer", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp, letterSpacing = 0.5.sp)
+                        Text("British Judo Association", color = Color.White.copy(alpha = 0.4f), fontSize = 11.sp)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceBg)
             )
-        },
-        bottomBar = {
-            if (isCompact && navController != null) {
-                BottomNavBar(userRole = userRole, navController = navController)
-            }
         }
     ) { padding ->
         Column(
@@ -170,13 +153,9 @@ fun TimerScreen(
             }
 
             HorizontalDivider(color = Color.White.copy(alpha = 0.06f))
-
             Spacer(Modifier.height(40.dp))
 
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier         = Modifier.size(280.dp)
-            ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(280.dp)) {
                 CircularProgressIndicator(
                     progress    = { 1f },
                     modifier    = Modifier.fillMaxSize(),
@@ -192,29 +171,16 @@ fun TimerScreen(
                     strokeCap   = StrokeCap.Round
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text          = timeString,
-                        color         = timerColor,
-                        fontSize      = 62.sp,
-                        fontWeight    = FontWeight.Bold,
-                        letterSpacing = (-1).sp
-                    )
+                    Text(text = timeString, color = timerColor, fontSize = 62.sp, fontWeight = FontWeight.Bold, letterSpacing = (-1).sp)
                     Spacer(Modifier.height(4.dp))
-                    Text(
-                        text      = statusLabel,
-                        color     = Color.White.copy(alpha = 0.45f),
-                        fontSize  = 11.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Text(text = statusLabel, color = Color.White.copy(alpha = 0.45f), fontSize = 11.sp, textAlign = TextAlign.Center)
                 }
             }
 
             Spacer(Modifier.height(40.dp))
 
             Row(
-                modifier              = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                modifier              = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 verticalAlignment     = Alignment.CenterVertically
             ) {
@@ -231,12 +197,7 @@ fun TimerScreen(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = "Reset",
-                        tint               = Color.White.copy(alpha = 0.6f),
-                        modifier           = Modifier.size(24.dp)
-                    )
+                    Icon(Icons.Default.Refresh, contentDescription = "Reset", tint = Color.White.copy(alpha = 0.6f), modifier = Modifier.size(24.dp))
                 }
 
                 Box(
@@ -244,48 +205,25 @@ fun TimerScreen(
                         .weight(1f)
                         .height(58.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(
-                            if (isFinished) SurfaceBg
-                            else if (isRunning) SurfaceMid
-                            else AppRed
-                        )
+                        .background(if (isFinished) SurfaceBg else if (isRunning) SurfaceMid else AppRed)
                         .border(
                             width = 1.dp,
-                            color = when {
-                                isFinished -> Color.White.copy(alpha = 0.1f)
-                                isRunning  -> AppRed.copy(alpha = 0.5f)
-                                else       -> Color.Transparent
-                            },
+                            color = when { isFinished -> Color.White.copy(alpha = 0.1f); isRunning -> AppRed.copy(alpha = 0.5f); else -> Color.Transparent },
                             shape = RoundedCornerShape(16.dp)
                         )
                         .clickable { if (!isFinished) isRunning = !isRunning },
                     contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        verticalAlignment     = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Icon(
                             imageVector        = if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
                             contentDescription = null,
-                            tint               = when {
-                                isFinished -> Color.White.copy(alpha = 0.3f)
-                                isRunning  -> AppRed
-                                else       -> Color.White
-                            },
+                            tint               = when { isFinished -> Color.White.copy(alpha = 0.3f); isRunning -> AppRed; else -> Color.White },
                             modifier           = Modifier.size(26.dp)
                         )
                         Text(
-                            text = when {
-                                isFinished -> "Finished"
-                                isRunning  -> "Pause"
-                                else       -> "Start"
-                            },
-                            color      = when {
-                                isFinished -> Color.White.copy(alpha = 0.3f)
-                                isRunning  -> AppRed
-                                else       -> Color.White
-                            },
+                            text       = when { isFinished -> "Finished"; isRunning -> "Pause"; else -> "Start" },
+                            color      = when { isFinished -> Color.White.copy(alpha = 0.3f); isRunning -> AppRed; else -> Color.White },
                             fontWeight = FontWeight.Bold,
                             fontSize   = 16.sp
                         )
@@ -296,20 +234,12 @@ fun TimerScreen(
             Spacer(Modifier.height(32.dp))
 
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceBg),
-                shape  = RoundedCornerShape(14.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
+                shape    = RoundedCornerShape(14.dp)
             ) {
                 Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-                    Text(
-                        "BJA Match Times",
-                        color         = Gold,
-                        fontWeight    = FontWeight.Bold,
-                        fontSize      = 13.sp,
-                        letterSpacing = 0.5.sp
-                    )
+                    Text("BJA Match Times", color = Gold, fontWeight = FontWeight.Bold, fontSize = 13.sp, letterSpacing = 0.5.sp)
                     Spacer(Modifier.height(14.dp))
 
                     listOf(
@@ -319,36 +249,22 @@ fun TimerScreen(
                         Triple("Mini Judo",              "1:00",  60)
                     ).forEachIndexed { index, (label, time, secs) ->
                         if (index > 0) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 10.dp),
-                                color    = Color.White.copy(alpha = 0.06f)
-                            )
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp), color = Color.White.copy(alpha = 0.06f))
                         }
                         Row(
-                            modifier              = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    if (!isRunning) {
-                                        selectedDurationIndex = index
-                                        totalSeconds          = secs
-                                        remainingSeconds      = secs
-                                        isFinished            = false
-                                    }
-                                },
+                            modifier              = Modifier.fillMaxWidth().clickable {
+                                if (!isRunning) {
+                                    selectedDurationIndex = index
+                                    totalSeconds          = secs
+                                    remainingSeconds      = secs
+                                    isFinished            = false
+                                }
+                            },
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment     = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text     = label,
-                                color    = Color.White.copy(alpha = 0.7f),
-                                fontSize = 13.sp
-                            )
-                            Text(
-                                text       = time,
-                                color      = if (selectedDurationIndex == index) Gold else Color.White.copy(alpha = 0.4f),
-                                fontSize   = 13.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text(text = label, color = Color.White.copy(alpha = 0.7f), fontSize = 13.sp)
+                            Text(text = time, color = if (selectedDurationIndex == index) Gold else Color.White.copy(alpha = 0.4f), fontSize = 13.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

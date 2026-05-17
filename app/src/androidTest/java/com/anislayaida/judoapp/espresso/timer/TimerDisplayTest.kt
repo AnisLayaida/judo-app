@@ -24,11 +24,11 @@ class TimerDisplayTest {
 
     @Test
     fun timer_shows_ready_state_on_launch() {
-        rule.onNodeWithText("準備 · Ready").assertIsDisplayed()
+        rule.onNodeWithText("準備  ·  Ready").assertIsDisplayed()
     }
 
     @Test
     fun match_duration_card_is_visible() {
-        rule.onNodeWithText("Match Duration").assertIsDisplayed()
+        rule.onNodeWithText("BJA Match Times").assertIsDisplayed()
     }
 }

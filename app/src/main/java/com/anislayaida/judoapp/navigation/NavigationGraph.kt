@@ -55,7 +55,7 @@ fun NavigationGraph(
     windowSizeClass: WindowSizeClass
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
-    val userRole        by authViewModel.userRole.collectAsStateWithLifecycle()
+    val userRole         by authViewModel.userRole.collectAsStateWithLifecycle()
     val startDestination by authViewModel.startDestination.collectAsStateWithLifecycle()
 
     val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
@@ -65,10 +65,7 @@ fun NavigationGraph(
     val showNavChrome     = currentRoute in NAV_CHROME_ROUTES
 
     if (startDestination == null) {
-        Box(
-            modifier         = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = Gold)
         }
         return
@@ -82,10 +79,8 @@ fun NavigationGraph(
         ) {
             composable(NavScreen.LOGIN.route) {
                 LoginScreen(
-                    navigateToSignUpScreen = {
-                        navController.navigate(NavScreen.SIGNUP.route)
-                    },
-                    navigateToHomeScreen = { role ->
+                    navigateToSignUpScreen = { navController.navigate(NavScreen.SIGNUP.route) },
+                    navigateToHomeScreen   = { role ->
                         when (role) {
                             UserRole.COACH   -> navController.navigate(NavScreen.COACH_HOME.route)
                             UserRole.REFEREE -> navController.navigate(NavScreen.REFEREE_HOME.route)
@@ -98,28 +93,15 @@ fun NavigationGraph(
             }
 
             composable(NavScreen.SIGNUP.route) {
-                SignUpScreen(
-                    navigateBack = { navController.popBackStack() },
-                    modifier     = modifier
-                )
+                SignUpScreen(navigateBack = { navController.popBackStack() }, modifier = modifier)
             }
 
             composable(NavScreen.HOME.route) {
-                HomeScreen(
-                    userRole      = userRole,
-                    navController = navController,
-                    isCompact     = isCompact
-                )
+                HomeScreen(userRole = userRole, navController = navController)
             }
 
             composable(NavScreen.COACH_HOME.route) {
-                CoachHomeScreen(
-                    text          = "Coach Panel",
-                    userRole      = userRole,
-                    navController = navController,
-                    modifier      = modifier,
-                    isCompact     = isCompact
-                )
+                CoachHomeScreen(text = "Coach Panel", userRole = userRole, navController = navController, modifier = modifier)
             }
 
             composable(
@@ -127,48 +109,27 @@ fun NavigationGraph(
                 arguments = listOf(navArgument("techniqueId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val techniqueId = backStackEntry.arguments?.getString("techniqueId") ?: ""
-                TechniqueDetailScreen(
-                    techniqueId   = techniqueId,
-                    navController = navController
-                )
+                TechniqueDetailScreen(techniqueId = techniqueId, navController = navController)
             }
 
             composable(NavScreen.GRADING.route) {
-                GradingScreen(
-                    userRole      = userRole,
-                    navController = navController,
-                    isCompact     = isCompact
-                )
+                GradingScreen(userRole = userRole, navController = navController)
             }
 
             composable(NavScreen.TIMER.route) {
-                TimerScreen(
-                    userRole      = userRole,
-                    navController = navController,
-                    isCompact     = isCompact
-                )
+                TimerScreen(userRole = userRole, navController = navController)
             }
 
             composable(NavScreen.PROFILE.route) {
-                ProfileScreen(
-                    userRole      = userRole,
-                    navController = navController,
-                    isCompact     = isCompact
-                )
+                ProfileScreen(userRole = userRole, navController = navController)
             }
 
             composable(NavScreen.REFEREE_HOME.route) {
-                RefereeScreen(
-                    userRole      = userRole,
-                    navController = navController,
-                    isCompact     = isCompact
-                )
+                RefereeScreen(userRole = userRole, navController = navController)
             }
 
             composable(NavScreen.ADD_TECHNIQUE.route) {
-                AddTechniqueScreen(
-                    navController = navController
-                )
+                AddTechniqueScreen(navController = navController)
             }
 
             composable(
@@ -176,22 +137,17 @@ fun NavigationGraph(
                 arguments = listOf(navArgument("techniqueId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val techniqueId = backStackEntry.arguments?.getString("techniqueId") ?: ""
-                EditTechniqueScreen(
-                    techniqueId   = techniqueId,
-                    navController = navController
-                )
+                EditTechniqueScreen(techniqueId = techniqueId, navController = navController)
             }
         }
     }
+
     if (isCompact) {
         Scaffold(
             modifier  = modifier,
             bottomBar = {
                 if (showNavChrome) {
-                    BottomNavBar(
-                        userRole      = userRole,
-                        navController = navController
-                    )
+                    BottomNavBar(userRole = userRole, navController = navController)
                 }
             }
         ) { innerPadding ->
@@ -200,10 +156,7 @@ fun NavigationGraph(
     } else {
         Row(modifier = modifier.fillMaxSize()) {
             if (showNavChrome) {
-                JudoNavRail(
-                    userRole      = userRole,
-                    navController = navController
-                )
+                JudoNavRail(userRole = userRole, navController = navController)
             }
             appNavHost(Modifier.weight(1f))
         }

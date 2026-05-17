@@ -27,7 +27,6 @@ import com.anislayaida.judoapp.data.technique.Technique
 import com.anislayaida.judoapp.data.user.User
 import com.anislayaida.judoapp.data.user.UserRole
 import com.anislayaida.judoapp.navigation.NavScreen
-import com.anislayaida.judoapp.presentation.components.BottomNavBar
 
 private val NavyBg    = Color(0xFF0D1B3E)
 private val SurfaceBg = Color(0xFF1A2B55)
@@ -63,7 +62,6 @@ fun CoachHomeScreen(
     userRole: UserRole = UserRole.COACH,
     navController: NavController? = null,
     modifier: Modifier = Modifier,
-    isCompact: Boolean = true,
     vm: CoachHomeViewModel = hiltViewModel()
 ) {
     val gradingRequests by vm.gradingRequests.collectAsStateWithLifecycle()
@@ -75,9 +73,7 @@ fun CoachHomeScreen(
     val memberCount     by vm.memberCount.collectAsStateWithLifecycle()
     val pendingCount    by vm.pendingCount.collectAsStateWithLifecycle()
 
-    val filteredTechniques = remember(techniques, searchQuery) {
-        vm.filteredTechniques()
-    }
+    val filteredTechniques = remember(techniques, searchQuery) { vm.filteredTechniques() }
 
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Library", "Judokas", "Gradings")
@@ -112,37 +108,20 @@ fun CoachHomeScreen(
                     Icon(Icons.Default.Add, contentDescription = "Add Technique", tint = Color.White)
                 }
             }
-        },
-        bottomBar = {
-            if (isCompact && navController != null) {
-                BottomNavBar(userRole = userRole, navController = navController)
-            }
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
 
             if (message != null) {
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-                    colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-                    shape    = RoundedCornerShape(8.dp)
-                ) {
+                Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(8.dp)) {
                     Text(message!!, modifier = Modifier.padding(14.dp), color = Gold, fontSize = 14.sp)
                 }
             }
 
-            Row(
-                modifier              = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
+            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 StatCard("Techniques", techniqueCount, Gold,     Modifier.weight(1f))
                 StatCard("Members",    memberCount,    AppGreen, Modifier.weight(1f))
-                StatCard(
-                    label    = "Pending",
-                    value    = pendingCount,
-                    color    = if (pendingCount > 0) AppRed else Color.Gray,
-                    modifier = Modifier.weight(1f)
-                )
+                StatCard("Pending",    pendingCount,   if (pendingCount > 0) AppRed else Color.Gray, Modifier.weight(1f))
             }
 
             TabRow(
@@ -150,10 +129,7 @@ fun CoachHomeScreen(
                 containerColor   = NavyBg,
                 contentColor     = Gold,
                 indicator        = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                        color = Gold
-                    )
+                    TabRowDefaults.SecondaryIndicator(Modifier.tabIndicatorOffset(tabPositions[selectedTab]), color = Gold)
                 }
             ) {
                 tabs.forEachIndexed { index, title ->
@@ -161,21 +137,12 @@ fun CoachHomeScreen(
                         selected = selectedTab == index,
                         onClick  = { selectedTab = index },
                         text     = {
-                            val showBadge = index == 2 && pendingCount > 0
-                            BadgedBox(
-                                badge = {
-                                    if (showBadge) {
-                                        Badge(containerColor = AppRed) {
-                                            Text(pendingCount.toString(), fontSize = 9.sp, color = Color.White)
-                                        }
-                                    }
+                            BadgedBox(badge = {
+                                if (index == 2 && pendingCount > 0) {
+                                    Badge(containerColor = AppRed) { Text(pendingCount.toString(), fontSize = 9.sp, color = Color.White) }
                                 }
-                            ) {
-                                Text(
-                                    title,
-                                    color      = if (selectedTab == index) Gold else Color.LightGray,
-                                    fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
-                                )
+                            }) {
+                                Text(title, color = if (selectedTab == index) Gold else Color.LightGray, fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal)
                             }
                         }
                     )
@@ -183,23 +150,9 @@ fun CoachHomeScreen(
             }
 
             when (selectedTab) {
-                0 -> LibraryTab(
-                    techniques      = filteredTechniques,
-                    searchQuery     = searchQuery,
-                    onSearchChanged = vm::onSearchChanged,
-                    onEditTechnique = { uid ->
-                        navController?.navigate("${NavScreen.EDIT_TECHNIQUE.route}/$uid")
-                    }
-                )
+                0 -> LibraryTab(techniques = filteredTechniques, searchQuery = searchQuery, onSearchChanged = vm::onSearchChanged, onEditTechnique = { uid -> navController?.navigate("${NavScreen.EDIT_TECHNIQUE.route}/$uid") })
                 1 -> JudokasTab(judokas = judokas)
-                2 -> GradingsTab(
-                    requests         = gradingRequests,
-                    onApprove        = vm::approveReadiness,
-                    onReject         = vm::rejectWithReason,
-                    onRecordPass     = vm::recordPass,
-                    onRecordFail     = vm::recordFail,
-                    rejectionReasons = vm.rejectionReasons
-                )
+                2 -> GradingsTab(requests = gradingRequests, onApprove = vm::approveReadiness, onReject = vm::rejectWithReason, onRecordPass = vm::recordPass, onRecordFail = vm::recordFail, rejectionReasons = vm.rejectionReasons)
             }
         }
     }
@@ -207,15 +160,8 @@ fun CoachHomeScreen(
 
 @Composable
 private fun StatCard(label: String, value: Int, color: Color, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(10.dp)
-    ) {
-        Column(
-            modifier            = Modifier.fillMaxWidth().padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    Card(modifier = modifier, colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(10.dp)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(value.toString(), color = color, fontSize = 28.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(2.dp))
             Text(label, color = Color.LightGray, fontSize = 11.sp)
@@ -224,56 +170,29 @@ private fun StatCard(label: String, value: Int, color: Color, modifier: Modifier
 }
 
 @Composable
-private fun LibraryTab(
-    techniques: List<Technique>,
-    searchQuery: String,
-    onSearchChanged: (String) -> Unit,
-    onEditTechnique: (String) -> Unit
-) {
+private fun LibraryTab(techniques: List<Technique>, searchQuery: String, onSearchChanged: (String) -> Unit, onEditTechnique: (String) -> Unit) {
     val grouped = remember(techniques) {
         val map = techniques.groupBy { it.beltLevel }
-        beltOrder.mapNotNull { belt ->
-            val list = map[belt]
-            if (!list.isNullOrEmpty()) belt to list else null
-        }
+        beltOrder.mapNotNull { belt -> val list = map[belt]; if (!list.isNullOrEmpty()) belt to list else null }
     }
-
     Column(modifier = Modifier.fillMaxSize()) {
         OutlinedTextField(
-            value         = searchQuery,
-            onValueChange = onSearchChanged,
-            placeholder   = { Text("Search techniques…", color = Color.Gray) },
-            leadingIcon   = { Icon(Icons.Default.Search, contentDescription = null, tint = Gold) },
-            modifier      = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
-            colors        = OutlinedTextFieldDefaults.colors(
-                focusedTextColor     = Color.White,
-                unfocusedTextColor   = Color.White,
-                focusedBorderColor   = Gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor          = Gold
-            ),
-            shape      = RoundedCornerShape(10.dp),
-            singleLine = true
+            value = searchQuery, onValueChange = onSearchChanged,
+            placeholder = { Text("Search techniques…", color = Color.Gray) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Gold) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+            colors = OutlinedTextFieldDefaults.colors(focusedTextColor = Color.White, unfocusedTextColor = Color.White, focusedBorderColor = Gold, unfocusedBorderColor = Color.Gray, cursorColor = Gold),
+            shape = RoundedCornerShape(10.dp), singleLine = true
         )
-
-        LazyColumn(
-            modifier       = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
-        ) {
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
             if (searchQuery.isBlank()) {
                 grouped.forEach { (belt, list) ->
                     item(key = "header_$belt") { BeltSectionHeader(belt = belt, count = list.size) }
-                    items(list, key = { it.uid }) { technique ->
-                        TechniqueRow(technique = technique, onEdit = { onEditTechnique(technique.uid) })
-                        Spacer(Modifier.height(6.dp))
-                    }
+                    items(list, key = { it.uid }) { technique -> TechniqueRow(technique = technique, onEdit = { onEditTechnique(technique.uid) }); Spacer(Modifier.height(6.dp)) }
                     item(key = "spacer_$belt") { Spacer(Modifier.height(8.dp)) }
                 }
             } else {
-                items(techniques, key = { it.uid }) { technique ->
-                    TechniqueRow(technique = technique, onEdit = { onEditTechnique(technique.uid) })
-                    Spacer(Modifier.height(6.dp))
-                }
+                items(techniques, key = { it.uid }) { technique -> TechniqueRow(technique = technique, onEdit = { onEditTechnique(technique.uid) }); Spacer(Modifier.height(6.dp)) }
             }
             item { Spacer(Modifier.height(80.dp)) }
         }
@@ -282,11 +201,7 @@ private fun LibraryTab(
 
 @Composable
 private fun BeltSectionHeader(belt: String, count: Int) {
-    Row(
-        modifier              = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 6.dp),
-        verticalAlignment     = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+    Row(modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 6.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Surface(shape = RoundedCornerShape(4.dp), color = beltColor(belt)) {
                 Text(belt, modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp), color = beltTextColor(belt), fontSize = 11.sp, fontWeight = FontWeight.Bold)
@@ -299,16 +214,8 @@ private fun BeltSectionHeader(belt: String, count: Int) {
 
 @Composable
 private fun TechniqueRow(technique: Technique, onEdit: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth().clickable { onEdit() },
-        colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(10.dp)
-    ) {
-        Row(
-            modifier              = Modifier.fillMaxWidth().padding(14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment     = Alignment.CenterVertically
-        ) {
+    Card(modifier = Modifier.fillMaxWidth().clickable { onEdit() }, colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(10.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().padding(14.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(technique.name, color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                 Spacer(Modifier.height(2.dp))
@@ -321,17 +228,8 @@ private fun TechniqueRow(technique: Technique, onEdit: () -> Unit) {
 
 @Composable
 private fun JudokasTab(judokas: List<User>) {
-    if (judokas.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No judokas registered yet.", color = Color.Gray, fontSize = 14.sp)
-        }
-        return
-    }
-    LazyColumn(
-        modifier            = Modifier.fillMaxSize(),
-        contentPadding      = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    if (judokas.isEmpty()) { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No judokas registered yet.", color = Color.Gray, fontSize = 14.sp) }; return }
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(judokas, key = { it.uid }) { judoka -> JudokaRow(judoka) }
         item { Spacer(Modifier.height(16.dp)) }
     }
@@ -339,16 +237,8 @@ private fun JudokasTab(judokas: List<User>) {
 
 @Composable
 private fun JudokaRow(user: User) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(10.dp)
-    ) {
-        Row(
-            modifier              = Modifier.fillMaxWidth().padding(14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment     = Alignment.CenterVertically
-        ) {
+    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(10.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().padding(14.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(user.fullName, color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                 Text(user.judoClub.ifEmpty { "No club" }, color = Color.LightGray, fontSize = 12.sp)
@@ -361,34 +251,11 @@ private fun JudokaRow(user: User) {
 }
 
 @Composable
-private fun GradingsTab(
-    requests:         List<GradingRequest>,
-    onApprove:        (GradingRequest) -> Unit,
-    onReject:         (GradingRequest, String) -> Unit,
-    onRecordPass:     (GradingRequest) -> Unit,
-    onRecordFail:     (GradingRequest) -> Unit,
-    rejectionReasons: List<String>
-) {
-    if (requests.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No pending grading requests.", color = Color.Gray, fontSize = 14.sp)
-        }
-        return
-    }
-    LazyColumn(
-        modifier            = Modifier.fillMaxSize(),
-        contentPadding      = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+private fun GradingsTab(requests: List<GradingRequest>, onApprove: (GradingRequest) -> Unit, onReject: (GradingRequest, String) -> Unit, onRecordPass: (GradingRequest) -> Unit, onRecordFail: (GradingRequest) -> Unit, rejectionReasons: List<String>) {
+    if (requests.isEmpty()) { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("No pending grading requests.", color = Color.Gray, fontSize = 14.sp) }; return }
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(requests, key = { it.id }) { request ->
-            GradingRequestRow(
-                request          = request,
-                onApprove        = { onApprove(request) },
-                onReject         = { reason -> onReject(request, reason) },
-                onRecordPass     = { onRecordPass(request) },
-                onRecordFail     = { onRecordFail(request) },
-                rejectionReasons = rejectionReasons
-            )
+            GradingRequestRow(request = request, onApprove = { onApprove(request) }, onReject = { reason -> onReject(request, reason) }, onRecordPass = { onRecordPass(request) }, onRecordFail = { onRecordFail(request) }, rejectionReasons = rejectionReasons)
         }
         item { Spacer(Modifier.height(16.dp)) }
     }
@@ -396,14 +263,7 @@ private fun GradingsTab(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun GradingRequestRow(
-    request:          GradingRequest,
-    onApprove:        () -> Unit,
-    onReject:         (String) -> Unit,
-    onRecordPass:     () -> Unit,
-    onRecordFail:     () -> Unit,
-    rejectionReasons: List<String>
-) {
+private fun GradingRequestRow(request: GradingRequest, onApprove: () -> Unit, onReject: (String) -> Unit, onRecordPass: () -> Unit, onRecordFail: () -> Unit, rejectionReasons: List<String>) {
     var showRejectDialog by remember { mutableStateOf(false) }
     var selectedReason   by remember { mutableStateOf("") }
 
@@ -412,95 +272,47 @@ private fun GradingRequestRow(
             onDismissRequest = { showRejectDialog = false },
             containerColor   = SurfaceBg,
             title = { Text("Rejection Reason", color = Color.White, fontWeight = FontWeight.Bold) },
-            text = {
+            text  = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text("Select a reason:", color = Color.LightGray, fontSize = 13.sp)
                     Spacer(Modifier.height(4.dp))
                     rejectionReasons.forEach { reason ->
-                        Row(
-                            modifier              = Modifier.fillMaxWidth().clickable { selectedReason = reason }.padding(vertical = 4.dp),
-                            verticalAlignment     = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            RadioButton(
-                                selected = selectedReason == reason,
-                                onClick  = { selectedReason = reason },
-                                colors   = RadioButtonDefaults.colors(selectedColor = Gold, unselectedColor = Color.Gray)
-                            )
+                        Row(modifier = Modifier.fillMaxWidth().clickable { selectedReason = reason }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            RadioButton(selected = selectedReason == reason, onClick = { selectedReason = reason }, colors = RadioButtonDefaults.colors(selectedColor = Gold, unselectedColor = Color.Gray))
                             Text(reason, color = Color.White, fontSize = 13.sp)
                         }
                     }
                 }
             },
-            confirmButton = {
-                Button(
-                    onClick  = {
-                        if (selectedReason.isNotBlank()) { onReject(selectedReason); showRejectDialog = false }
-                    },
-                    enabled  = selectedReason.isNotBlank(),
-                    colors   = ButtonDefaults.buttonColors(containerColor = AppRed)
-                ) { Text("Reject", color = Color.White) }
-            },
-            dismissButton = {
-                TextButton(onClick = { showRejectDialog = false }) { Text("Cancel", color = Gold) }
-            }
+            confirmButton = { Button(onClick = { if (selectedReason.isNotBlank()) { onReject(selectedReason); showRejectDialog = false } }, enabled = selectedReason.isNotBlank(), colors = ButtonDefaults.buttonColors(containerColor = AppRed)) { Text("Reject", color = Color.White) } },
+            dismissButton = { TextButton(onClick = { showRejectDialog = false }) { Text("Cancel", color = Gold) } }
         )
     }
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
-        shape    = RoundedCornerShape(10.dp)
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = SurfaceBg), shape = RoundedCornerShape(10.dp)) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(request.judokaName, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp)
             Spacer(Modifier.height(4.dp))
             Text("${request.currentBelt} → ${request.requestedBelt}", color = Color.LightGray, fontSize = 13.sp)
             Spacer(Modifier.height(4.dp))
-            val stageLabel = if (request.stage == "readiness") "Stage 1: Readiness Check" else "Stage 2: Record Result"
-            val stageColor = if (request.stage == "readiness") Gold else AppGreen
-            Text(stageLabel, color = stageColor, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+            Text(if (request.stage == "readiness") "Stage 1: Readiness Check" else "Stage 2: Record Result", color = if (request.stage == "readiness") Gold else AppGreen, fontSize = 12.sp, fontWeight = FontWeight.Medium)
             Spacer(Modifier.height(12.dp))
 
             if (request.stage == "readiness") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(
-                        onClick  = onApprove,
-                        colors   = ButtonDefaults.buttonColors(containerColor = AppGreen),
-                        modifier = Modifier.weight(1f),
-                        shape    = RoundedCornerShape(6.dp)
-                    ) {
-                        Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text("Approve", color = Color.White, fontSize = 13.sp)
+                    Button(onClick = onApprove, colors = ButtonDefaults.buttonColors(containerColor = AppGreen), modifier = Modifier.weight(1f), shape = RoundedCornerShape(6.dp)) {
+                        Icon(Icons.Default.Check, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp)); Spacer(Modifier.width(4.dp)); Text("Approve", color = Color.White, fontSize = 13.sp)
                     }
-                    OutlinedButton(
-                        onClick  = { showRejectDialog = true; selectedReason = "" },
-                        border   = androidx.compose.foundation.BorderStroke(1.dp, AppRed),
-                        modifier = Modifier.weight(1f),
-                        shape    = RoundedCornerShape(6.dp)
-                    ) {
-                        Icon(Icons.Default.Close, contentDescription = null, tint = AppRed, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text("Reject", color = AppRed, fontSize = 13.sp)
+                    OutlinedButton(onClick = { showRejectDialog = true; selectedReason = "" }, border = androidx.compose.foundation.BorderStroke(1.dp, AppRed), modifier = Modifier.weight(1f), shape = RoundedCornerShape(6.dp)) {
+                        Icon(Icons.Default.Close, contentDescription = null, tint = AppRed, modifier = Modifier.size(16.dp)); Spacer(Modifier.width(4.dp)); Text("Reject", color = AppRed, fontSize = 13.sp)
                     }
                 }
             } else {
                 Text("Record grading result:", color = Color.LightGray, fontSize = 12.sp)
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(
-                        onClick  = onRecordPass,
-                        colors   = ButtonDefaults.buttonColors(containerColor = AppGreen),
-                        modifier = Modifier.weight(1f),
-                        shape    = RoundedCornerShape(6.dp)
-                    ) { Text("Pass ✓", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp) }
-                    Button(
-                        onClick  = onRecordFail,
-                        colors   = ButtonDefaults.buttonColors(containerColor = AppRed),
-                        modifier = Modifier.weight(1f),
-                        shape    = RoundedCornerShape(6.dp)
-                    ) { Text("Fail ✗", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp) }
+                    Button(onClick = onRecordPass, colors = ButtonDefaults.buttonColors(containerColor = AppGreen), modifier = Modifier.weight(1f), shape = RoundedCornerShape(6.dp)) { Text("Pass ✓", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp) }
+                    Button(onClick = onRecordFail, colors = ButtonDefaults.buttonColors(containerColor = AppRed),   modifier = Modifier.weight(1f), shape = RoundedCornerShape(6.dp)) { Text("Fail ✗", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp) }
                 }
             }
         }

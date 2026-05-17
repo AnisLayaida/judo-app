@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.anislayaida.judoapp.data.user.UserRole
-import com.anislayaida.judoapp.presentation.components.BottomNavBar
 import kotlinx.coroutines.delay
 
 private val NavyBg      = Color(0xFF0D1B3E)
@@ -44,12 +43,20 @@ data class PlayerScore(
     val hansokuMake:    Boolean get() = shido >= 3
 }
 
+// Checks win condition synchronously and returns winner string or null
+private fun checkWinner(white: PlayerScore, blue: PlayerScore): String? = when {
+    white.hasWon && !blue.hasWon -> "White"
+    blue.hasWon && !white.hasWon -> "Blue"
+    white.hansokuMake            -> "Blue"
+    blue.hansokuMake             -> "White"
+    else                         -> null
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RefereeScreen(
-    userRole:      UserRole      = UserRole.REFEREE,
-    navController: NavController? = null,
-    isCompact:     Boolean        = true
+    userRole:      UserRole       = UserRole.REFEREE,
+    navController: NavController? = null
 ) {
     var whiteScore       by remember { mutableStateOf(PlayerScore()) }
     var blueScore        by remember { mutableStateOf(PlayerScore()) }
@@ -59,21 +66,14 @@ fun RefereeScreen(
     var isFinished       by remember { mutableStateOf(false) }
     var winner           by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(whiteScore, blueScore) {
-        when {
-            whiteScore.hasWon && !blueScore.hasWon  -> { winner = "White"; isRunning = false; isFinished = true }
-            blueScore.hasWon  && !whiteScore.hasWon -> { winner = "Blue";  isRunning = false; isFinished = true }
-            whiteScore.hansokuMake                  -> { winner = "Blue";  isRunning = false; isFinished = true }
-            blueScore.hansokuMake                   -> { winner = "White"; isRunning = false; isFinished = true }
-        }
-    }
-
+    // Timer only — win detection is handled synchronously in click handlers
     LaunchedEffect(isRunning) {
         while (isRunning && remainingSeconds > 0) {
             delay(1000L)
             remainingSeconds--
             if (remainingSeconds == 0) {
-                isRunning = false; isFinished = true
+                isRunning  = false
+                isFinished = true
                 winner = when {
                     whiteScore.effectiveIppon > blueScore.effectiveIppon  -> "White"
                     blueScore.effectiveIppon  > whiteScore.effectiveIppon -> "Blue"
@@ -89,10 +89,24 @@ fun RefereeScreen(
         }
     }
 
+    fun applyScore(newWhite: PlayerScore = whiteScore, newBlue: PlayerScore = blueScore) {
+        whiteScore = newWhite
+        blueScore  = newBlue
+        val detected = checkWinner(newWhite, newBlue)
+        if (detected != null && winner == null) {
+            winner     = detected
+            isRunning  = false
+            isFinished = true
+        }
+    }
+
     fun resetMatch() {
-        whiteScore = PlayerScore(); blueScore = PlayerScore()
+        whiteScore       = PlayerScore()
+        blueScore        = PlayerScore()
         remainingSeconds = totalSeconds
-        isRunning = false; isFinished = false; winner = null
+        isRunning        = false
+        isFinished       = false
+        winner           = null
     }
 
     val minutes    = remainingSeconds / 60
@@ -113,17 +127,8 @@ fun RefereeScreen(
                 title   = { Text("Referee Board", color = Color.White, fontWeight = FontWeight.Bold) },
                 actions = {
                     if (isRunning) {
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = AppGreen.copy(alpha = 0.2f)
-                        ) {
-                            Text(
-                                "Live",
-                                modifier   = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                                color      = AppGreen,
-                                fontSize   = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                        Surface(shape = RoundedCornerShape(6.dp), color = AppGreen.copy(alpha = 0.2f)) {
+                            Text("Live", modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), color = AppGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                         Spacer(Modifier.width(8.dp))
                     }
@@ -133,15 +138,10 @@ fun RefereeScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = NavyBg)
             )
-        },
-        bottomBar = {
-            if (isCompact && navController != null) {
-                BottomNavBar(userRole = userRole, navController = navController)
-            }
         }
     ) { padding ->
         Column(
-            modifier = Modifier
+            modifier            = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState()),
@@ -168,11 +168,7 @@ fun RefereeScreen(
             Spacer(Modifier.height(24.dp))
             Text(text = timeString, color = timerColor, fontSize = 80.sp, fontWeight = FontWeight.Bold, letterSpacing = 4.sp)
             Text(
-                text     = when {
-                    isFinished -> "終了 · End"
-                    isRunning  -> "試合中 · Live"
-                    else       -> "準備 · Ready"
-                },
+                text     = when { isFinished -> "終了 · End"; isRunning -> "試合中 · Live"; else -> "準備 · Ready" },
                 color    = Color.LightGray,
                 fontSize = 14.sp
             )
@@ -188,14 +184,12 @@ fun RefereeScreen(
                         selected = totalSeconds == secs,
                         onClick  = {
                             if (!isRunning && !isFinished) {
-                                totalSeconds = secs; remainingSeconds = secs
+                                totalSeconds     = secs
+                                remainingSeconds = secs
                             }
                         },
                         label  = { Text(label, fontSize = 12.sp, color = if (totalSeconds == secs) NavyBg else Color.White) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Gold,
-                            containerColor         = SurfaceBg
-                        )
+                        colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Gold, containerColor = SurfaceBg)
                     )
                 }
             }
@@ -213,12 +207,7 @@ fun RefereeScreen(
                     modifier = Modifier.weight(1f).height(48.dp),
                     shape    = RoundedCornerShape(24.dp)
                 ) {
-                    Text(
-                        if (isRunning) "Pause" else "Start",
-                        color      = if (isRunning) NavyBg else Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize   = 16.sp
-                    )
+                    Text(if (isRunning) "Pause" else "Start", color = if (isRunning) NavyBg else Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
                 Button(
                     onClick  = { resetMatch() },
@@ -232,39 +221,19 @@ fun RefereeScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            Box(
-                modifier         = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
                 Row(
                     modifier              = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment     = Alignment.CenterVertically
                 ) {
-                    ScorePanel(
-                        label     = "White",
-                        color     = PlayerWhite,
-                        textColor = Color.White,
-                        barColor  = PlayerWhite,
-                        score     = whiteScore,
-                        isWinner  = winner == "White",
-                        modifier  = Modifier.weight(1f)
-                    )
+                    ScorePanel(label = "White", color = PlayerWhite, textColor = Color.White, barColor = PlayerWhite, score = whiteScore, isWinner = winner == "White", modifier = Modifier.weight(1f))
                     Text("VS", color = Color.White.copy(alpha = 0.3f), fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    ScorePanel(
-                        label     = "Blue",
-                        color     = PlayerBlue,
-                        textColor = PlayerBlue,
-                        barColor  = PlayerBlue,
-                        score     = blueScore,
-                        isWinner  = winner == "Blue",
-                        modifier  = Modifier.weight(1f)
-                    )
+                    ScorePanel(label = "Blue",  color = PlayerBlue,  textColor = PlayerBlue,  barColor = PlayerBlue,  score = blueScore,  isWinner = winner == "Blue",  modifier = Modifier.weight(1f))
                 }
             }
 
             Spacer(Modifier.height(20.dp))
-
             Text("Tap to score", color = Color.White.copy(alpha = 0.4f), fontSize = 12.sp)
             Spacer(Modifier.height(10.dp))
 
@@ -272,44 +241,54 @@ fun RefereeScreen(
                 modifier            = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf(
-                    "Ippon"  to Pair({ if (!isFinished) whiteScore = whiteScore.copy(ippon  = whiteScore.ippon  + 1) },
-                        { if (!isFinished) blueScore  = blueScore.copy(ippon   = blueScore.ippon   + 1) }),
-                    "Wazari" to Pair({ if (!isFinished) whiteScore = whiteScore.copy(wazari = whiteScore.wazari + 1) },
-                        { if (!isFinished) blueScore  = blueScore.copy(wazari  = blueScore.wazari  + 1) }),
-                    "Yuko"   to Pair({ if (!isFinished) whiteScore = whiteScore.copy(yuko   = whiteScore.yuko   + 1) },
-                        { if (!isFinished) blueScore  = blueScore.copy(yuko    = blueScore.yuko    + 1) }),
-                    "Shido"  to Pair({ if (!isFinished) whiteScore = whiteScore.copy(shido  = whiteScore.shido  + 1) },
-                        { if (!isFinished) blueScore  = blueScore.copy(shido   = blueScore.shido   + 1) })
-                ).forEach { (label, actions) ->
-                    val buttonColor = when (label) {
+                data class ScoringRow(val label: String, val whiteAction: () -> Unit, val blueAction: () -> Unit)
+
+                val rows = listOf(
+                    ScoringRow("Ippon",
+                        { applyScore(newWhite = whiteScore.copy(ippon  = whiteScore.ippon  + 1)) },
+                        { applyScore(newBlue  = blueScore.copy(ippon   = blueScore.ippon   + 1)) }
+                    ),
+                    ScoringRow("Wazari",
+                        { applyScore(newWhite = whiteScore.copy(wazari = whiteScore.wazari + 1)) },
+                        { applyScore(newBlue  = blueScore.copy(wazari  = blueScore.wazari  + 1)) }
+                    ),
+                    ScoringRow("Yuko",
+                        { applyScore(newWhite = whiteScore.copy(yuko   = whiteScore.yuko   + 1)) },
+                        { applyScore(newBlue  = blueScore.copy(yuko    = blueScore.yuko    + 1)) }
+                    ),
+                    ScoringRow("Shido",
+                        { applyScore(newWhite = whiteScore.copy(shido  = whiteScore.shido  + 1)) },
+                        { applyScore(newBlue  = blueScore.copy(shido   = blueScore.shido   + 1)) }
+                    )
+                )
+
+                rows.forEach { row ->
+                    val buttonColor = when (row.label) {
                         "Ippon"  -> Color(0xFF1E3A2F)
                         "Wazari" -> Color(0xFF1E2A3A)
                         "Yuko"   -> Color(0xFF1E2A3A)
                         else     -> Color(0xFF2A1E1E)
                     }
-                    val labelColor = if (label == "Shido") Gold else Color.White
-                    Row(
-                        modifier              = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
+                    val labelColor = if (row.label == "Shido") Gold else Color.White
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(
-                            onClick  = actions.first,
+                            onClick  = { if (!isFinished) row.whiteAction() },
                             enabled  = !isFinished,
                             colors   = ButtonDefaults.buttonColors(containerColor = buttonColor),
                             modifier = Modifier.weight(1f).height(48.dp),
                             shape    = RoundedCornerShape(10.dp)
                         ) {
-                            Text(label, color = labelColor, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                            Text(row.label, color = labelColor, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                         }
                         Button(
-                            onClick  = actions.second,
+                            onClick  = { if (!isFinished) row.blueAction() },
                             enabled  = !isFinished,
                             colors   = ButtonDefaults.buttonColors(containerColor = buttonColor),
                             modifier = Modifier.weight(1f).height(48.dp),
                             shape    = RoundedCornerShape(10.dp)
                         ) {
-                            Text(label, color = PlayerBlue, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                            Text(row.label, color = PlayerBlue, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                         }
                     }
                 }
@@ -323,31 +302,15 @@ fun RefereeScreen(
 }
 
 @Composable
-private fun ScorePanel(
-    label:    String,
-    color:    Color,
-    textColor: Color,
-    barColor: Color,
-    score:    PlayerScore,
-    isWinner: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val borderColor by animateColorAsState(
-        targetValue   = if (isWinner) Gold else Color.Transparent,
-        animationSpec = tween(300),
-        label         = "panelBorder"
-    )
+private fun ScorePanel(label: String, color: Color, textColor: Color, barColor: Color, score: PlayerScore, isWinner: Boolean, modifier: Modifier = Modifier) {
+    val borderColor by animateColorAsState(targetValue = if (isWinner) Gold else Color.Transparent, animationSpec = tween(300), label = "panelBorder")
     Card(
         modifier = modifier,
         colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
         shape    = RoundedCornerShape(12.dp),
         border   = androidx.compose.foundation.BorderStroke(width = if (isWinner) 2.dp else 0.dp, color = borderColor)
     ) {
-        Column(
-            modifier            = Modifier.fillMaxWidth().padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Box(modifier = Modifier.width(48.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(barColor))
             Text(label, color = textColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -367,12 +330,7 @@ private fun ScorePanel(
                             .border(1.dp, if (filled) Gold else Color.White.copy(alpha = 0.2f), RoundedCornerShape(4.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text       = "${index + 1}",
-                            color      = if (filled) Gold else Color.White.copy(alpha = 0.3f),
-                            fontSize   = 11.sp,
-                            fontWeight = if (filled) FontWeight.Bold else FontWeight.Normal
-                        )
+                        Text(text = "${index + 1}", color = if (filled) Gold else Color.White.copy(alpha = 0.3f), fontSize = 11.sp, fontWeight = if (filled) FontWeight.Bold else FontWeight.Normal)
                     }
                 }
             }
@@ -383,12 +341,7 @@ private fun ScorePanel(
 @Composable
 private fun ScoreBox(label: String, value: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            value.toString(),
-            color      = if (value > 0) Color.White else Color.White.copy(alpha = 0.3f),
-            fontSize   = 28.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Text(value.toString(), color = if (value > 0) Color.White else Color.White.copy(alpha = 0.3f), fontSize = 28.sp, fontWeight = FontWeight.Bold)
         Text(label, color = Color.LightGray, fontSize = 10.sp)
     }
 }

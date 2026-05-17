@@ -25,7 +25,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.anislayaida.judoapp.data.technique.GradingRequest
 import com.anislayaida.judoapp.data.user.UserRole
-import com.anislayaida.judoapp.presentation.components.BottomNavBar
 
 private val NavyBg    = Color(0xFF0D1B3E)
 private val SurfaceBg = Color(0xFF1A2B55)
@@ -72,21 +71,21 @@ private fun statusLabel(status: String): String = when (status) {
 }
 
 private val kyuSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red",    "https://www.judocoach.com/index.php/syllabus/kyu-grade/white-belt"),
-    "Red"    to Pair("Yellow", "https://www.judocoach.com/index.php/syllabus/kyu-grade/red-belt"),
-    "Yellow" to Pair("Orange", "https://www.judocoach.com/index.php/syllabus/kyu-grade/yellow-belt"),
-    "Orange" to Pair("Green",  "https://www.judocoach.com/index.php/syllabus/kyu-grade/orange-belt"),
-    "Green"  to Pair("Blue",   "https://www.judocoach.com/index.php/syllabus/kyu-grade/green-belt"),
-    "Blue"   to Pair("Brown",  "https://www.judocoach.com/index.php/syllabus/kyu-grade/blue-belt"),
+    "White"  to Pair("Red",    "https://indd.adobe.com/view/e133cbb5-55d1-4a6b-bc36-0734b428a9b8"),
+    "Red"    to Pair("Yellow", "https://indd.adobe.com/view/a83f27b4-c22b-42dd-98c1-121764c103d4"),
+    "Yellow" to Pair("Orange", "https://indd.adobe.com/view/a592f72d-e681-4d7b-8cda-682a62eb31df"),
+    "Orange" to Pair("Green",  "https://indd.adobe.com/view/277e6638-1d80-424b-92d3-1a0a45e1faf3"),
+    "Green"  to Pair("Blue",   "https://indd.adobe.com/view/dc0db1ac-71ad-4254-9f74-644989e7c8e8"),
+    "Blue"   to Pair("Brown",  "https://indd.adobe.com/view/e2fa24cf-bf21-4fbe-adfe-afe129b4b8a8"),
 )
 
 private val monSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
-    "White"  to Pair("Red (1st–3rd Mon)",     "https://www.judocoach.com/index.php/syllabus/mon-grade/white-belt"),
-    "Red"    to Pair("Yellow (4th–6th Mon)",  "https://www.judocoach.com/index.php/syllabus/mon-grade/red-belt"),
-    "Yellow" to Pair("Orange (7th–9th Mon)",  "https://www.judocoach.com/index.php/syllabus/mon-grade/yellow-belt"),
-    "Orange" to Pair("Green (10th–12th Mon)", "https://www.judocoach.com/index.php/syllabus/mon-grade/orange-belt"),
-    "Green"  to Pair("Blue (13th–15th Mon)",  "https://www.judocoach.com/index.php/syllabus/mon-grade/green-belt"),
-    "Blue"   to Pair("Brown (16th–18th Mon)", "https://www.judocoach.com/index.php/syllabus/mon-grade/blue-belt"),
+    "White"  to Pair("Red (1st–3rd Mon)",     "https://indd.adobe.com/view/da516ee0-b283-413a-b3dd-f634d1343c4d"),
+    "Red"    to Pair("Yellow (4th–6th Mon)",  "https://indd.adobe.com/view/e177100e-7077-46a2-beb2-688d4fd81048"),
+    "Yellow" to Pair("Orange (7th–9th Mon)",  "https://indd.adobe.com/view/273ca184-25c2-4c37-a27f-3c05c5256de3"),
+    "Orange" to Pair("Green (10th–12th Mon)", "https://indd.adobe.com/view/1b27e4d2-bb09-48f1-94fd-919d6f68d86b"),
+    "Green"  to Pair("Blue (13th–15th Mon)",  "https://indd.adobe.com/view/ced8c859-3081-4502-a6aa-40594ae79b18"),
+    "Blue"   to Pair("Brown (16th–18th Mon)", "https://indd.adobe.com/view/615a3aaa-f40b-4bc1-b224-7471006767c3"),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,7 +93,6 @@ private val monSyllabusPdfs: Map<String, Pair<String, String>> = mapOf(
 fun GradingScreen(
     userRole: UserRole = UserRole.JUDOKA,
     navController: NavController? = null,
-    isCompact: Boolean = true,
     vm: GradingViewModel = hiltViewModel()
 ) {
     val currentBelt by vm.currentBelt.collectAsStateWithLifecycle()
@@ -134,11 +132,6 @@ fun GradingScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceBg)
             )
-        },
-        bottomBar = {
-            if (isCompact && navController != null) {
-                BottomNavBar(userRole = userRole, navController = navController)
-            }
         }
     ) { padding ->
         LazyColumn(
@@ -149,7 +142,6 @@ fun GradingScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding      = PaddingValues(top = 12.dp, bottom = 32.dp)
         ) {
-
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -260,9 +252,7 @@ fun GradingScreen(
                 }
             }
 
-            item {
-                Text("Grading History", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
-            }
+            item { Text("Grading History", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp)) }
 
             if (requests.isEmpty()) {
                 item { Text("No grading requests yet.", color = Color.Gray, fontSize = 13.sp) }
@@ -277,9 +267,7 @@ fun GradingScreen(
                 }
             }
 
-            item {
-                Text("Grading Syllabus", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
-            }
+            item { Text("Grading Syllabus", color = Gold, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp)) }
 
             if (syllabus != null) {
                 val (targetBelt, pdfUrl) = syllabus
@@ -300,10 +288,7 @@ fun GradingScreen(
                             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = Gold, modifier = Modifier.size(22.dp))
                                 Column {
-                                    Text(
-                                        "BJA ${if (isUnder16) "Mon" else "Kyu"} — $targetBelt",
-                                        color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp
-                                    )
+                                    Text("BJA ${if (isUnder16) "Mon" else "Kyu"} — $targetBelt", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                     Text("Your next grading — tap to open", color = Gold, fontSize = 11.sp)
                                 }
                             }
@@ -313,9 +298,7 @@ fun GradingScreen(
                 }
             }
 
-            item {
-                Text("Previous Syllabuses", color = Color.LightGray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
-            }
+            item { Text("Previous Syllabuses", color = Color.LightGray, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp)) }
 
             val beltOrder          = syllabusPdfs.keys.toList()
             val currentIndex       = beltOrder.indexOf(currentBelt)
@@ -360,10 +343,7 @@ fun GradingScreen(
 }
 
 @Composable
-private fun GradingRequestCard(
-    request:  GradingRequest,
-    onCancel: (() -> Unit)? = null
-) {
+private fun GradingRequestCard(request: GradingRequest, onCancel: (() -> Unit)? = null) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors   = CardDefaults.cardColors(containerColor = SurfaceBg),
@@ -376,44 +356,23 @@ private fun GradingRequestCard(
                 verticalAlignment     = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        "${request.currentBelt} → ${request.requestedBelt}",
-                        color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 15.sp
-                    )
+                    Text("${request.currentBelt} → ${request.requestedBelt}", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault())
-                            .format(java.util.Date(request.timestamp)),
+                        java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date(request.timestamp)),
                         color = Color.Gray, fontSize = 12.sp
                     )
-                    Text(
-                        if (request.stage == "readiness") "Stage 1: Readiness" else "Stage 2: Result",
-                        color = Color.LightGray, fontSize = 11.sp
-                    )
+                    Text(if (request.stage == "readiness") "Stage 1: Readiness" else "Stage 2: Result", color = Color.LightGray, fontSize = 11.sp)
                 }
-                Surface(
-                    shape = RoundedCornerShape(6.dp),
-                    color = statusColor(request.status).copy(alpha = 0.2f)
-                ) {
-                    Text(
-                        statusLabel(request.status),
-                        modifier   = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                        color      = statusColor(request.status),
-                        fontSize   = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                Surface(shape = RoundedCornerShape(6.dp), color = statusColor(request.status).copy(alpha = 0.2f)) {
+                    Text(statusLabel(request.status), modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), color = statusColor(request.status), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
 
             if (request.rejectionReason.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
                 Surface(shape = RoundedCornerShape(6.dp), color = AppRed.copy(alpha = 0.1f)) {
-                    Text(
-                        "Reason: ${request.rejectionReason}",
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        color    = AppRed,
-                        fontSize = 12.sp
-                    )
+                    Text("Reason: ${request.rejectionReason}", modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp), color = AppRed, fontSize = 12.sp)
                 }
             }
 

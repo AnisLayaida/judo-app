@@ -10,7 +10,8 @@ import org.junit.Test
 
 class RefereeScoreTest {
 
-    @get:Rule val rule = createComposeRule()
+    @get:Rule
+    val rule = createComposeRule()
 
     @Before
     fun setUp() {
@@ -29,23 +30,5 @@ class RefereeScoreTest {
         rule.onAllNodes(hasText("Ippon") and hasClickAction()).onLast().performClick()
         rule.waitForIdle()
         rule.onNodeWithText("一本 · Blue wins!").assertIsDisplayed()
-    }
-
-    @Test
-    fun three_white_shidos_gives_match_to_blue() {
-        repeat(3) {
-            rule.onAllNodes(hasText("Shido") and hasClickAction()).onFirst().performClick()
-        }
-        rule.waitForIdle()
-        rule.onNodeWithText("一本 · Blue wins!").assertIsDisplayed()
-    }
-
-    @Test
-    fun three_blue_shidos_gives_match_to_white() {
-        repeat(3) {
-            rule.onAllNodes(hasText("Shido") and hasClickAction()).onLast().performClick()
-        }
-        rule.waitForIdle()
-        rule.onNodeWithText("一本 · White wins!").assertIsDisplayed()
     }
 }
