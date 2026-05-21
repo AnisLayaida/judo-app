@@ -43,7 +43,6 @@ data class PlayerScore(
     val hansokuMake:    Boolean get() = shido >= 3
 }
 
-// Checks win condition synchronously and returns winner string or null
 private fun checkWinner(white: PlayerScore, blue: PlayerScore): String? = when {
     white.hasWon && !blue.hasWon -> "White"
     blue.hasWon && !white.hasWon -> "Blue"
@@ -66,7 +65,6 @@ fun RefereeScreen(
     var isFinished       by remember { mutableStateOf(false) }
     var winner           by remember { mutableStateOf<String?>(null) }
 
-    // Timer only — win detection is handled synchronously in click handlers
     LaunchedEffect(isRunning) {
         while (isRunning && remainingSeconds > 0) {
             delay(1000L)

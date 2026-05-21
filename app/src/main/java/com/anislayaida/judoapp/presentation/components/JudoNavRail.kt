@@ -1,7 +1,6 @@
 package com.anislayaida.judoapp.presentation.components
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -30,27 +28,28 @@ fun JudoNavRail(
 
     NavigationRail(
         containerColor = Color(0xFF1A2B55),
-        contentColor = Color.White
+        contentColor   = Color.White,
+        header         = null
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         items.forEach { item ->
             val isSelected = currentRoute == item.screen.route
 
             NavigationRailItem(
                 selected = isSelected,
-                label = {
+                label    = {
                     Text(
-                        text = item.label,
-                        fontSize = 9.sp,
-                        color = if (isSelected) Color(0xFFC9A84C) else Color.White
+                        text      = item.label,
+                        fontSize  = 9.sp,
+                        color     = if (isSelected) Color(0xFFC9A84C) else Color.White
                     )
                 },
                 icon = {
                     Icon(
-                        imageVector = item.icon,
+                        imageVector        = item.icon,
                         contentDescription = item.label,
-                        tint = if (isSelected) Color(0xFFC9A84C) else Color.White
+                        tint               = if (isSelected) Color(0xFFC9A84C) else Color.White
                     )
                 },
                 colors = NavigationRailItemDefaults.colors(
@@ -59,10 +58,11 @@ fun JudoNavRail(
                 onClick = {
                     navController.navigate(item.screen.route) {
                         launchSingleTop = true
-                        restoreState = true
+                        restoreState    = true
                     }
                 }
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
